@@ -1,6 +1,34 @@
 import React from 'react';
 import './index.css'; 
 
+enum Rotation {
+  Up = 1,
+  Right,
+  Down,
+  Left,
+}
+
+enum Color { 
+  Red = 1,
+  Purple,
+  Yellow,
+}
+
+interface Card {
+  id: number
+  img: string
+  xpos: number[]
+  ypos: number[]
+  rotation: Rotation
+  tree: Tree[]
+}
+
+interface Tree {
+  id: number
+  color: Color
+  die?: number // Dado (opcional)
+}
+
 class Square extends React.Component {
     render() {
       return (
@@ -18,7 +46,7 @@ class Square extends React.Component {
   
     render() {
       const status = 'Next player: X';
-  
+      
       return (
         <div>
           <div className="status">{status}</div>
@@ -26,16 +54,25 @@ class Square extends React.Component {
             {this.renderSquare(0)}
             {this.renderSquare(1)}
             {this.renderSquare(2)}
+            {this.renderSquare(3)}
           </div>
           <div className="board-row">
-            {this.renderSquare(3)}
             {this.renderSquare(4)}
             {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
             {this.renderSquare(6)}
             {this.renderSquare(7)}
+          </div>
+          <div className="board-row">
             {this.renderSquare(8)}
+            {this.renderSquare(9)}
+            {this.renderSquare(10)}
+            {this.renderSquare(11)}
+          </div>
+          <div className="board-row">
+            {this.renderSquare(12)}
+            {this.renderSquare(13)}
+            {this.renderSquare(14)}
+            {this.renderSquare(15)}
           </div>
         </div>
       );
