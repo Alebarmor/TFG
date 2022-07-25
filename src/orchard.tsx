@@ -33,7 +33,7 @@ var cards={
   "elements":[    
   {
       "id":1,
-      "img":"./assets/1.png",
+      "img":"img/1.png",
       "pos":null,
       "rotation":1,
       "trees":[2,1,1,2,3,3]   
@@ -41,7 +41,7 @@ var cards={
 
   {
       "id":2,
-      "img":"./assets/2.png",
+      "img":"img/2.png",
       "pos":null,
       "rotation":1,
       "trees":[1,2,1,2,3,3]   
@@ -49,17 +49,115 @@ var cards={
 
   {
       "id":3,
-      "img":"./assets/3.png",
+      "img":"img/3.png",
       "pos":null,
       "rotation":1,
       "trees":[2,1,3,3,1,2]   
   },
   {
       "id":4,
-      "img":"./assets/4.png",
+      "img":"img/4.png",
       "pos":null,
       "rotation":1,
       "trees":[1,2,3,3,1,2]   
+  },
+  {
+      "id":5,
+      "img":"img/5.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,3,2,2,3,1]   
+  },
+  {
+      "id":6,
+      "img":"img/6.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[3,1,2,2,3,1]   
+  },
+  {
+      "id":7,
+      "img":"img/7.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[3,1,3,2,1,2]   
+  },
+  {
+      "id":8,
+      "img":"img/8.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[3,1,2,3,1,2]   
+  },
+  {
+      "id":9,
+      "img":"img/9.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[2,3,2,1,3,1]   
+  },
+  {
+      "id":10,
+      "img":"img/10.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[2,3,1,2,3,1]   
+  },
+  {
+      "id":11,
+      "img":"img/11.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[2,2,1,3,3,1]   
+  },
+  {
+      "id":12,
+      "img":"img/12.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[2,2,1,3,1,3]   
+  },
+  {
+      "id":13,
+      "img":"img/13.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,2,1,3,2,3]   
+  },
+  {
+      "id":14,
+      "img":"img/14.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,2,3,1,2,3]   
+  },
+  {
+      "id":15,
+      "img":"img/15.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[3,2,1,1,2,3]   
+  },
+  {
+      "id":16,
+      "img":"img/16.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[2,3,1,1,2,3]   
+  },
+  {
+      "id":17,
+      "img":"img/17.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,1,3,2,2,3]   
+  },
+  {
+      "id":18,
+      "img":"img/18.png",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,1,3,2,3,2]   
   }
   ]
 }
@@ -125,7 +223,7 @@ class Square extends React.Component {
             <ul>{cards.elements.map(z=>{
               return(<li value={z.id}>
                 <p>{z.id}</p>
-                <img src="xd" alt="Site Logo" width={70}></img>
+                <img src={z.img} alt="Site Logo" width={70}></img>
               </li>)
             })
             }</ul>
