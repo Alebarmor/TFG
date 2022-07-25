@@ -27,6 +27,51 @@ var __assign = (this && this.__assign) || function () {
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React from 'react';
 import './index.css';
+var Rotation;
+(function (Rotation) {
+    Rotation[Rotation["Up"] = 1] = "Up";
+    Rotation[Rotation["Right"] = 2] = "Right";
+    Rotation[Rotation["Down"] = 3] = "Down";
+    Rotation[Rotation["Left"] = 4] = "Left";
+})(Rotation || (Rotation = {}));
+var Color;
+(function (Color) {
+    Color[Color["Red"] = 1] = "Red";
+    Color[Color["Purple"] = 2] = "Purple";
+    Color[Color["Yellow"] = 3] = "Yellow";
+})(Color || (Color = {}));
+var cards = {
+    "cards": [
+        {
+            "id": 1,
+            "img": "",
+            "pos": null,
+            "rotation": 1,
+            "trees": [1, 2, 3, 1, 2, 3]
+        },
+        {
+            "id": 2,
+            "img": "",
+            "pos": null,
+            "rotation": 1,
+            "trees": [1, 2, 3, 1, 2, 3]
+        },
+        {
+            "id": 3,
+            "img": "",
+            "pos": null,
+            "rotation": 1,
+            "trees": [1, 2, 3, 1, 2, 3]
+        },
+        {
+            "id": 4,
+            "img": "",
+            "pos": null,
+            "rotation": 1,
+            "trees": [1, 2, 3, 1, 2, 3]
+        }
+    ]
+};
 var Square = /** @class */ (function (_super) {
     __extends(Square, _super);
     function Square() {
@@ -47,7 +92,10 @@ var Board = /** @class */ (function (_super) {
     };
     Board.prototype.render = function () {
         var status = 'Next player: X';
-        return (_jsxs("div", { children: [_jsx("div", __assign({ className: "status" }, { children: status })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(0), this.renderSquare(1), this.renderSquare(2)] })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(3), this.renderSquare(4), this.renderSquare(5)] })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(6), this.renderSquare(7), this.renderSquare(8)] }))] }));
+        _jsx("ul", { children: cards.cards.map(function (z) {
+                return (_jsx("li", { value: z.id }));
+            }) });
+        return (_jsxs("div", { children: [_jsx("div", __assign({ className: "status" }, { children: status })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(0), this.renderSquare(1), this.renderSquare(2), this.renderSquare(3)] })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(4), this.renderSquare(5), this.renderSquare(6), this.renderSquare(7)] })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(8), this.renderSquare(9), this.renderSquare(10), this.renderSquare(11)] })), _jsxs("div", __assign({ className: "board-row" }, { children: [this.renderSquare(12), this.renderSquare(13), this.renderSquare(14), this.renderSquare(15)] }))] }));
     };
     return Board;
 }(React.Component));
