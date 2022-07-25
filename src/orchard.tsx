@@ -1,4 +1,5 @@
 import React from 'react';
+import { readJsonConfigFile } from 'typescript';
 import './index.css'; 
 
 enum Rotation {
@@ -17,16 +18,50 @@ enum Color {
 interface Card {
   id: number
   img: string
-  xpos: number[]
-  ypos: number[]
+  pos: number[] // solo hace falta una posición y esta coincide con la casilla
   rotation: Rotation
-  tree: Tree[]
+  trees: Color[]
 }
 
-interface Tree {
-  id: number
+interface Tree {  //¿Se podría cambiar por color simplemente?
+  id: number //creo que el id no hace falta porque todos los rojos son iguales, todos los morados son iguales ...
   color: Color
-  die?: number // Dado (opcional)
+  //die?: number // Dado (opcional)  // yo lo quitaba de aquí y lo ponia en square
+}
+
+var cards={
+  "cards":[    
+  {
+      "id":1,
+      "img":"fe",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,2,3,1,2,3]   
+  },
+
+  {
+      "id":2,
+      "img":"ee",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,2,3,1,2,3]   
+  },
+
+  {
+      "id":3,
+      "img":"as",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,2,3,1,2,3]   
+  },
+  {
+      "id":4,
+      "img":"ce",
+      "pos":null,
+      "rotation":1,
+      "trees":[1,2,3,1,2,3]   
+  }
+  ]
 }
 
 class Square extends React.Component {
@@ -46,7 +81,6 @@ class Square extends React.Component {
   
     render() {
       const status = 'Next player: X';
-      
       return (
         <div>
           <div className="status">{status}</div>
@@ -87,7 +121,15 @@ class Square extends React.Component {
             <Board />
           </div>
           <div className="game-info">
-            <div>{/* status */}</div>
+            <div>{/* status */
+            <ul>{cards.cards.map(z=>{
+              return(<li value={z.id}>
+                <p>{z.id}</p>
+                <p>{z.img}</p>
+              </li>)
+            })
+            }</ul>
+            }</div>
             <ol>{/* TODO */}</ol>
           </div>
         </div>
