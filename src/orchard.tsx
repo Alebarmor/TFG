@@ -1,6 +1,6 @@
 import React from 'react';
 import { readJsonConfigFile } from 'typescript';
-import './index.css'; 
+import './index.css';
 
 enum Rotation {
   Up = 1,
@@ -30,36 +30,36 @@ interface Tree {  //¿Se podría cambiar por color simplemente?
 }
 
 var cards={
-  "cards":[    
+  "elements":[    
   {
       "id":1,
-      "img":"fe",
+      "img":"./assets/1.png",
       "pos":null,
       "rotation":1,
-      "trees":[1,2,3,1,2,3]   
+      "trees":[2,1,1,2,3,3]   
   },
 
   {
       "id":2,
-      "img":"ee",
+      "img":"./assets/2.png",
       "pos":null,
       "rotation":1,
-      "trees":[1,2,3,1,2,3]   
+      "trees":[1,2,1,2,3,3]   
   },
 
   {
       "id":3,
-      "img":"as",
+      "img":"./assets/3.png",
       "pos":null,
       "rotation":1,
-      "trees":[1,2,3,1,2,3]   
+      "trees":[2,1,3,3,1,2]   
   },
   {
       "id":4,
-      "img":"ce",
+      "img":"./assets/4.png",
       "pos":null,
       "rotation":1,
-      "trees":[1,2,3,1,2,3]   
+      "trees":[1,2,3,3,1,2]   
   }
   ]
 }
@@ -122,10 +122,10 @@ class Square extends React.Component {
           </div>
           <div className="game-info">
             <div>{/* status */
-            <ul>{cards.cards.map(z=>{
+            <ul>{cards.elements.map(z=>{
               return(<li value={z.id}>
                 <p>{z.id}</p>
-                <p>{z.img}</p>
+                <img src="xd" alt="Site Logo" width={70}></img>
               </li>)
             })
             }</ul>
