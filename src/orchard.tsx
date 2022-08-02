@@ -18,16 +18,11 @@ enum Color {
 interface Card {
   id: number
   img: string
-  pos: number[] // solo hace falta una posición y esta coincide con la casilla
+  pos: number[] 
   rotation: Rotation
   trees: Color[]
 }
 
-interface Tree {  //¿Se podría cambiar por color simplemente?
-  id: number //creo que el id no hace falta porque todos los rojos son iguales, todos los morados son iguales ...
-  color: Color
-  //die?: number // Dado (opcional)  // yo lo quitaba de aquí y lo ponia en square
-}
 
 var cards={
   "elements":[    
@@ -181,20 +176,19 @@ class Square extends React.Component {
       const status = 'Next player: X';
       return (
         <div>
-          <div className="status">{status}</div>
+          <div className="status">{}</div>
           <div className="board-row">
             {this.renderSquare(0)}
             {this.renderSquare(1)}
             {this.renderSquare(2)}
             {this.renderSquare(3)}
-          </div>
-          <div className="board-row">
             {this.renderSquare(4)}
             {this.renderSquare(5)}
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
           </div>
           <div className="board-row">
+           
+            {this.renderSquare(6)}
+            {this.renderSquare(7)}
             {this.renderSquare(8)}
             {this.renderSquare(9)}
             {this.renderSquare(10)}
@@ -205,7 +199,35 @@ class Square extends React.Component {
             {this.renderSquare(13)}
             {this.renderSquare(14)}
             {this.renderSquare(15)}
+            {this.renderSquare(16)}
+            {this.renderSquare(17)}
+            
           </div>
+          <div className="board-row">
+            {this.renderSquare(18)}
+            {this.renderSquare(19)}
+            {this.renderSquare(20)}
+            {this.renderSquare(21)}
+            {this.renderSquare(22)}
+            {this.renderSquare(23)}
+          </div>
+          <div className="board-row">
+            {this.renderSquare(24)}
+            {this.renderSquare(25)}
+            {this.renderSquare(26)}
+            {this.renderSquare(27)}
+            {this.renderSquare(28)}
+            {this.renderSquare(29)}
+          </div>
+          <div className="board-row">
+            {this.renderSquare(30)}
+            {this.renderSquare(31)}
+            {this.renderSquare(32)}
+            {this.renderSquare(33)}
+            {this.renderSquare(34)}
+            {this.renderSquare(35)}
+          </div>
+          
         </div>
       );
     }
@@ -215,22 +237,27 @@ class Square extends React.Component {
     render() {
       return (
         <div className="game">
+           <p id='title'>ORCHARD</p>
           <div className="game-board">
             <Board />
           </div>
-          <div className="game-info">
-            <div>{/* status */
-            <ul>{cards.elements.map(z=>{
-              return(<li value={z.id}>
-                <p>{z.id}</p>
-                <img src={z.img} alt="Site Logo" width={70}></img>
-              </li>)
-            })
-            }</ul>
-            }</div>
-            <ol>{/* TODO */}</ol>
+          <div className="game-info"> 
+           
           </div>
+        
+          <div className='cards'>{
+              
+              <ul id='lista1'>{cards.elements.map(z=>{
+                return(
+                  
+                  <img src={z.img} alt="Site Logo" width={140
+                  }></img>
+                )
+              })
+              }</ul>
+              }</div>
         </div>
+        
       );
     }
   }
