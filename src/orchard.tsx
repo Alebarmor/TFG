@@ -160,8 +160,9 @@ var cards={
 class Square extends React.Component {
     render() {
       return (
-        <button className="square">
+        <button className="square" type='button'>
           {/* TODO */}
+          <img src="https://i.imgur.com/mAt0iKU.png" height ="70" width="70" />
         </button>
       );
     }
