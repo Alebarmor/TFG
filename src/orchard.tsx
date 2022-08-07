@@ -192,7 +192,6 @@ class Square extends React.Component {
             {this.renderSquare(11)}
           </div>
           <div className="board-row">
-           
             {this.renderSquare(12)}
             {this.renderSquare(13)}
             {this.renderSquare(14)}
@@ -277,7 +276,6 @@ class Square extends React.Component {
             {this.renderSquare(83)}
           </div>
           <div className="board-row">
-           
             {this.renderSquare(84)}
             {this.renderSquare(85)}
             {this.renderSquare(86)}
