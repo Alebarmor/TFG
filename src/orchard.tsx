@@ -1,5 +1,5 @@
 import React from 'react';
-import { readJsonConfigFile } from 'typescript';
+//import { readJsonConfigFile } from 'typescript';
 import './index.css';
 
 enum Rotation {
@@ -24,7 +24,7 @@ interface Card {
 }
 
 
-var cards={
+const allCards={
   "elements":[    
   {
       "id":1,
@@ -156,6 +156,12 @@ var cards={
   }
   ]
 }
+var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+lista = lista.sort(function() {return Math.random() - 0.5});
+
+let miarray = lista.slice(0,8);
+let arrayrandon = new Array;
+var cards=allCards.elements.filter(z=>miarray.includes(z.id));
 
 class Square extends React.Component {
     render() {
@@ -367,7 +373,7 @@ class Square extends React.Component {
         
           <div className='cards'>{
               
-              <ul id='lista1'>{cards.elements.map(z=>{
+              <ul id='lista1'>{cards.map((z: { img: string | undefined; })=>{
                 return(
                   
                   <img src={z.img} alt="Site Logo" width={140
