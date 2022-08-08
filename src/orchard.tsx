@@ -166,8 +166,9 @@ var cards=allCards.elements.filter(z=>miarray.includes(z.id));
 class Square extends React.Component {
     render() {
       return (
-        <button className="square">
+        <button className="square" type='button'>
           {/* TODO */}
+          <img src="https://i.imgur.com/mAt0iKU.png" height ="70" width="70" />
         </button>
       );
     }
@@ -198,7 +199,6 @@ class Square extends React.Component {
             {this.renderSquare(11)}
           </div>
           <div className="board-row">
-           
             {this.renderSquare(12)}
             {this.renderSquare(13)}
             {this.renderSquare(14)}
@@ -283,7 +283,6 @@ class Square extends React.Component {
             {this.renderSquare(83)}
           </div>
           <div className="board-row">
-           
             {this.renderSquare(84)}
             {this.renderSquare(85)}
             {this.renderSquare(86)}
