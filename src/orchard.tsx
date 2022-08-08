@@ -159,7 +159,7 @@ const allCards={
 var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 lista = lista.sort(function() {return Math.random() - 0.5});
 
-let miarray = lista.slice(0,8);
+let miarray = lista.slice(0,9);
 let arrayrandon = new Array;
 var cards=allCards.elements.filter(z=>miarray.includes(z.id));
 
