@@ -18,9 +18,10 @@ enum Color {
 interface Cards {
   id: number
   img: string
-  pos: number[] 
+  pos: number
   rotation: Rotation
   trees: Color[]
+  inUse: boolean
 }
 
 
@@ -31,7 +32,8 @@ const allCards={
       "img":"img/1.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,1,1,2,3,3]   
+      "trees":[2,1,1,2,3,3],
+      "inUse": false
   },
 
   {
@@ -39,7 +41,8 @@ const allCards={
       "img":"img/2.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,2,1,2,3,3]   
+      "trees":[1,2,1,2,3,3],
+      "inUse": false
   },
 
   {
@@ -47,112 +50,128 @@ const allCards={
       "img":"img/3.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,1,3,3,1,2]   
+      "trees":[2,1,3,3,1,2],
+      "inUse": false
   },
   {
       "id":4,
       "img":"img/4.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,2,3,3,1,2]   
+      "trees":[1,2,3,3,1,2],
+      "inUse": false   
   },
   {
       "id":5,
       "img":"img/5.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,3,2,2,3,1]   
+      "trees":[1,3,2,2,3,1],
+      "inUse": false   
   },
   {
       "id":6,
       "img":"img/6.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[3,1,2,2,3,1]   
+      "trees":[3,1,2,2,3,1],
+      "inUse": false   
   },
   {
       "id":7,
       "img":"img/7.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[3,1,3,2,1,2]   
+      "trees":[3,1,3,2,1,2],
+      "inUse": false   
   },
   {
       "id":8,
       "img":"img/8.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[3,1,2,3,1,2]   
+      "trees":[3,1,2,3,1,2],
+      "inUse": false   
   },
   {
       "id":9,
       "img":"img/9.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,3,2,1,3,1]   
+      "trees":[2,3,2,1,3,1],
+      "inUse": false   
   },
   {
       "id":10,
       "img":"img/10.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,3,1,2,3,1]   
+      "trees":[2,3,1,2,3,1],
+      "inUse": false   
   },
   {
       "id":11,
       "img":"img/11.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,2,1,3,3,1]   
+      "trees":[2,2,1,3,3,1],
+      "inUse": false   
   },
   {
       "id":12,
       "img":"img/12.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,2,1,3,1,3]   
+      "trees":[2,2,1,3,1,3],
+      "inUse": false   
   },
   {
       "id":13,
       "img":"img/13.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,2,1,3,2,3]   
+      "trees":[1,2,1,3,2,3],
+      "inUse": false   
   },
   {
       "id":14,
       "img":"img/14.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,2,3,1,2,3]   
+      "trees":[1,2,3,1,2,3],
+      "inUse": false   
   },
   {
       "id":15,
       "img":"img/15.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[3,2,1,1,2,3]   
+      "trees":[3,2,1,1,2,3],
+      "inUse": false   
   },
   {
       "id":16,
       "img":"img/16.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[2,3,1,1,2,3]   
+      "trees":[2,3,1,1,2,3],
+      "inUse": false   
   },
   {
       "id":17,
       "img":"img/17.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,1,3,2,2,3]   
+      "trees":[1,1,3,2,2,3],
+      "inUse": false   
   },
   {
       "id":18,
       "img":"img/18.png",
       "pos":[777,777,777,777,777,777],
       "rotation":1,
-      "trees":[1,1,3,2,3,2]   
+      "trees":[1,1,3,2,3,2],
+      "inUse": false   
   }
   ]
 }
@@ -365,12 +384,44 @@ class Board extends React.Component<{cards:any }, { }> {
             {this.renderSquare(142)}
             {this.renderSquare(143)}
           </div>
+          <div className="board-row">
+            {this.renderSquare(144)}
+            {this.renderSquare(145)}
+            {this.renderSquare(146)}
+            {this.renderSquare(147)}
+            {this.renderSquare(148)}
+            {this.renderSquare(149)}
+            {this.renderSquare(150)}
+            {this.renderSquare(151)}
+            {this.renderSquare(152)}
+            {this.renderSquare(153)}
+            {this.renderSquare(154)}
+            {this.renderSquare(155)}
+          </div>
           
         </div>
       );
     }
   }
-  
+
+  function changePosition(newIndex: number) {
+    const beingUsed = cards.filter((card) => {
+      return card.inUse === true;
+    });
+
+    if (beingUsed.length != 0)
+    {
+      const oldIndex = cards.indexOf(beingUsed[0])
+      cards[oldIndex].pos = 0
+      cards[oldIndex].inUse = false
+    }
+
+    cards[newIndex].pos = 66
+    cards[newIndex].inUse = true
+
+    console.log(cards)
+  }
+
   class Game extends React.Component {
     render() {
       return (
@@ -385,13 +436,12 @@ class Board extends React.Component<{cards:any }, { }> {
         
           <div className='cards'>{
               
-              <ul id='lista1'>{cards.map((z: { img: string | undefined; })=>{
+              <ul id='lista1'>{cards.map((z: { img: string; id: number; pos: number; rotation: number; trees: number[]; inUse: boolean;})=>{
                 return(
-                  
                   <img src={z.img} alt="Site Logo" width={140
-                  }></img>
-                )
-              })
+                  } onClick={() => changePosition(cards.indexOf(z))}></img>
+                ) // El centro es 66, aunque vendría bien meter una fila (y no columna) para
+              }) // tener un centro real, puesto que las cartas son 2x3 cuadrados.
               }</ul>
               }</div>
         </div>
