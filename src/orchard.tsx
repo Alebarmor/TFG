@@ -15,7 +15,7 @@ enum Color {
   Yellow,
 }
 
-interface Card {
+interface Cards {
   id: number
   img: string
   pos: number
@@ -30,7 +30,7 @@ const allCards={
   {
       "id":1,
       "img":"img/1.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,1,1,2,3,3],
       "inUse": false
@@ -39,7 +39,7 @@ const allCards={
   {
       "id":2,
       "img":"img/2.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,2,1,2,3,3],
       "inUse": false
@@ -48,7 +48,7 @@ const allCards={
   {
       "id":3,
       "img":"img/3.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,1,3,3,1,2],
       "inUse": false
@@ -56,7 +56,7 @@ const allCards={
   {
       "id":4,
       "img":"img/4.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,2,3,3,1,2],
       "inUse": false   
@@ -64,7 +64,7 @@ const allCards={
   {
       "id":5,
       "img":"img/5.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,3,2,2,3,1],
       "inUse": false   
@@ -72,7 +72,7 @@ const allCards={
   {
       "id":6,
       "img":"img/6.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[3,1,2,2,3,1],
       "inUse": false   
@@ -80,7 +80,7 @@ const allCards={
   {
       "id":7,
       "img":"img/7.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[3,1,3,2,1,2],
       "inUse": false   
@@ -88,7 +88,7 @@ const allCards={
   {
       "id":8,
       "img":"img/8.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[3,1,2,3,1,2],
       "inUse": false   
@@ -96,7 +96,7 @@ const allCards={
   {
       "id":9,
       "img":"img/9.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,3,2,1,3,1],
       "inUse": false   
@@ -104,7 +104,7 @@ const allCards={
   {
       "id":10,
       "img":"img/10.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,3,1,2,3,1],
       "inUse": false   
@@ -112,7 +112,7 @@ const allCards={
   {
       "id":11,
       "img":"img/11.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,2,1,3,3,1],
       "inUse": false   
@@ -120,7 +120,7 @@ const allCards={
   {
       "id":12,
       "img":"img/12.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,2,1,3,1,3],
       "inUse": false   
@@ -128,7 +128,7 @@ const allCards={
   {
       "id":13,
       "img":"img/13.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,2,1,3,2,3],
       "inUse": false   
@@ -136,7 +136,7 @@ const allCards={
   {
       "id":14,
       "img":"img/14.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,2,3,1,2,3],
       "inUse": false   
@@ -144,7 +144,7 @@ const allCards={
   {
       "id":15,
       "img":"img/15.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[3,2,1,1,2,3],
       "inUse": false   
@@ -152,7 +152,7 @@ const allCards={
   {
       "id":16,
       "img":"img/16.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[2,3,1,1,2,3],
       "inUse": false   
@@ -160,7 +160,7 @@ const allCards={
   {
       "id":17,
       "img":"img/17.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,1,3,2,2,3],
       "inUse": false   
@@ -168,7 +168,7 @@ const allCards={
   {
       "id":18,
       "img":"img/18.png",
-      "pos":0,
+      "pos":[777,777,777,777,777,777],
       "rotation":1,
       "trees":[1,1,3,2,3,2],
       "inUse": false   
@@ -182,21 +182,34 @@ let miarray = lista.slice(0,9);
 let arrayrandon = new Array;
 var cards=allCards.elements.filter(z=>miarray.includes(z.id));
 
-class Square extends React.Component {
+class Square extends React.Component<{id:number, cards:any }, { }> {
+   imag: string = "";
+   cardsColor: number[] = []; 
+   cardsPos: number[] = []; 
+   n:number=0;
+    
     render() {
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.cardsPos.push(x.pos.indexOf(this.props.id)));
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.n=this.n+1);
+      if(this.cardsColor.includes(1)){this.imag="https://i.imgur.com/mAt0iKU.png"}else{
+      if(this.cardsColor.includes(2)){this.imag="https://i.imgur.com/XRzjdo1.png"}else{
+      if(this.cardsColor.includes(3)){this.imag="https://i.imgur.com/DG3Gczr.png"}else{
+       this.imag="https://th.bing.com/th/id/R.ff76d7863a19d037b34a03c4449178dd?rik=%2b8NPZfWI%2b5nSvw&riu=http%3a%2f%2fwww.imagemagick.org%2fUsage%2fcanvas%2ftrans_fx.png&ehk=IpCH9l8aG%2fvQURdHBHC68epCBqosqIVPywATeVcMTdE%3d&risl=&pid=ImgRaw&r=0"
+      }
+    }}
       return (
-        <button className="square" type='button'>
-          {/* TODO */}
-          <img src="https://i.imgur.com/mAt0iKU.png" height ="66" width="66" />
+        <button className="square">
+           {<img src={this.imag} height ="67" width="67" alt=''/>}
         </button>
       );
     }
   }
-  
-  class Board extends React.Component {
-    renderSquare(i:number) {
-      return <Square />;
-    }
+
+class Board extends React.Component<{cards:any }, { }> {
+  renderSquare(i:number) {
+    return <Square id={i} cards={cards} />;
+  }
   
     render() {
       const status = 'Next player: X';
@@ -415,7 +428,7 @@ class Square extends React.Component {
         <div className="game">
            <p id='title'>ORCHARD</p>
           <div className="game-board">
-            <Board />
+            <Board cards={cards}/>
           </div>
           <div className="game-info"> 
            
