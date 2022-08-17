@@ -182,19 +182,15 @@ let miarray = lista.slice(0,9);
 let arrayrandon = new Array;
 var cards=allCards.elements.filter(z=>miarray.includes(z.id));
 
-class Square extends React.Component<{id:number, cards:any }, { }> {
+class Square extends React.Component<{id:number, cards:any,cardsColor: number[],cardsPos: number[] }, { }> {
    imag: string = "";
-   cardsColor: number[] = []; 
-   cardsPos: number[] = []; 
-   n:number=0;
-    
     render() {
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.cardsPos.push(x.pos.indexOf(this.props.id)));
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.n=this.n+1);
-      if(this.cardsColor.includes(1)){this.imag="https://i.imgur.com/mAt0iKU.png"}else{
-      if(this.cardsColor.includes(2)){this.imag="https://i.imgur.com/XRzjdo1.png"}else{
-      if(this.cardsColor.includes(3)){this.imag="https://i.imgur.com/DG3Gczr.png"}else{
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsPos.push(x.pos.indexOf(this.props.id)));
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
+
+      if(this.props.cardsColor.includes(1)){this.imag="https://i.imgur.com/mAt0iKU.png"}else{
+      if(this.props.cardsColor.includes(2)){this.imag="https://i.imgur.com/XRzjdo1.png"}else{
+      if(this.props.cardsColor.includes(3)){this.imag="https://i.imgur.com/DG3Gczr.png"}else{
        this.imag="https://th.bing.com/th/id/R.ff76d7863a19d037b34a03c4449178dd?rik=%2b8NPZfWI%2b5nSvw&riu=http%3a%2f%2fwww.imagemagick.org%2fUsage%2fcanvas%2ftrans_fx.png&ehk=IpCH9l8aG%2fvQURdHBHC68epCBqosqIVPywATeVcMTdE%3d&risl=&pid=ImgRaw&r=0"
       }
     }}
@@ -208,7 +204,7 @@ class Square extends React.Component<{id:number, cards:any }, { }> {
 
 class Board extends React.Component<{cards:any }, { }> {
   renderSquare(i:number) {
-    return <Square id={i} cards={cards} />;
+    return <Square id={i} cards={cards} cardsColor={new Array} cardsPos={new Array}/>;
   }
   
     render() {
@@ -411,20 +407,20 @@ class Board extends React.Component<{cards:any }, { }> {
 
     if (beingUsed.length != 0)
     {
-      const oldIndex = cards.indexOf(beingUsed[0])
-      cards[oldIndex].pos = 0
-      cards[oldIndex].inUse = false
+      const oldIndex = cards.indexOf(beingUsed[0]);
+      cards[oldIndex].pos = [777,777,777,777,777,777];
+      cards[oldIndex].inUse = false;
     }
 
-    cards[newIndex].pos = 66
-    cards[newIndex].inUse = true
-
-    console.log(cards)
+    cards[newIndex].pos = [65,66,77,78,89,90];
+    cards[newIndex].inUse = true;
+    return cards
   }
 
   class Game extends React.Component {
     render() {
       return (
+
         <div className="game">
            <p id='title'>ORCHARD</p>
           <div className="game-board">
@@ -435,13 +431,14 @@ class Board extends React.Component<{cards:any }, { }> {
           </div>
         
           <div className='cards'>{
-              
-              <ul id='lista1'>{cards.map((z: { img: string; id: number; pos: number; rotation: number; trees: number[]; inUse: boolean;})=>{
+              <ul id='lista1'>{cards.filter(z=>z.inUse==false).map(z=>{
                 return(
+                  <div>
                   <img src={z.img} alt="Site Logo" width={140
-                  } onClick={() => changePosition(cards.indexOf(z))}></img>
-                ) // El centro es 66, aunque vendría bien meter una fila (y no columna) para
-              }) // tener un centro real, puesto que las cartas son 2x3 cuadrados.
+                  } onClick={() => this.setState(changePosition(cards.indexOf(z)))}></img>
+                  </div>
+                ) 
+              }) 
               }</ul>
               }</div>
         </div>
