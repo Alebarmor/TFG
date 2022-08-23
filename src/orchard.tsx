@@ -188,10 +188,10 @@ class Square extends React.Component<{id:number, cards:any,cardsColor: number[],
       cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsPos.push(x.pos.indexOf(this.props.id)));
       cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
 
-      if(this.props.cardsColor.includes(1)){this.imag="https://i.imgur.com/mAt0iKU.png"}else{
-      if(this.props.cardsColor.includes(2)){this.imag="https://i.imgur.com/XRzjdo1.png"}else{
-      if(this.props.cardsColor.includes(3)){this.imag="https://i.imgur.com/DG3Gczr.png"}else{
-       this.imag="https://www.downloadsource.es/uploaded/blank.ico"
+      if(this.props.cardsColor.includes(1)){this.imag="img/Color 01 - Red.png"}else{
+      if(this.props.cardsColor.includes(2)){this.imag="img/Color 02 - Purple.png"}else{
+      if(this.props.cardsColor.includes(3)){this.imag="img/Color 03 - Yellow.png"}else{
+       this.imag="img/blank.ico"
       }
     }}
       return (
