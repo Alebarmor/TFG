@@ -191,7 +191,7 @@ class Square extends React.Component<{id:number, cards:any,cardsColor: number[],
       if(this.props.cardsColor.includes(1)){this.imag="https://i.imgur.com/mAt0iKU.png"}else{
       if(this.props.cardsColor.includes(2)){this.imag="https://i.imgur.com/XRzjdo1.png"}else{
       if(this.props.cardsColor.includes(3)){this.imag="https://i.imgur.com/DG3Gczr.png"}else{
-       this.imag="https://th.bing.com/th/id/R.ff76d7863a19d037b34a03c4449178dd?rik=%2b8NPZfWI%2b5nSvw&riu=http%3a%2f%2fwww.imagemagick.org%2fUsage%2fcanvas%2ftrans_fx.png&ehk=IpCH9l8aG%2fvQURdHBHC68epCBqosqIVPywATeVcMTdE%3d&risl=&pid=ImgRaw&r=0"
+       this.imag="https://www.downloadsource.es/uploaded/blank.ico"
       }
     }}
       return (
