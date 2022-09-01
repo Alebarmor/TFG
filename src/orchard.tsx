@@ -446,6 +446,7 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
     {
       const oldIndex = cards.indexOf(beingUsed[0]);
       cards[oldIndex].pos = [777,777,777,777,777,777];
+      cards[oldIndex].rotation = 1;
       cards[oldIndex].inUse = false;
     }
 
@@ -454,19 +455,153 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
     return cards
   }
 
+  function changeUpDownLeftRight(direction:string) {
+    const beingUsed = cards.filter((card) => {
+      return card.inUse === true;
+    });
+
+    if (beingUsed.length != 0)
+    {
+      const index = cards.indexOf(beingUsed[0]);
+      var position = cards[index].pos;
+      var result = cards[index].pos;
+      let i;
+      var horizontal = [1,1,1,1,1,1];
+      var vertical = [12,12,12,12,12,12]
+
+      if (direction == "right") {
+        if (position[0]%12 != 11 && position[5]%12 != 11) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + horizontal[i];
+          }
+        }
+      } else if (direction == "left") {
+        if (position[0]%12 != 0 && position[5]%12 != 0) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] - horizontal[i];
+          }
+        }
+      } else if (direction == "up") {
+        if (position[0]-12 >= 0 && position[5]-12 >= 0) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] - vertical[i];
+          }
+        }
+      } else if (direction == "down") {
+        if (position[4]+12 < 156 && position[1]+12 < 156) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + vertical[i];
+          }
+        }
+      }
+
+      cards[index].pos = result;
+    }
+
+    return cards
+  }
+
+  function rotate() {
+    const beingUsed = cards.filter((card) => {
+      return card.inUse === true;
+    });
+
+    if (beingUsed.length != 0)
+    {
+      const index = cards.indexOf(beingUsed[0]);
+      var position = cards[index].pos;
+      var result = cards[index].pos;
+      let rotation = cards[index].rotation;
+      let i;
+      var mov12 = [0,11,-13,-2,-26,-15];
+      var mov23 = [0,-13,-11,-24,-22,-35];
+      var mov34 = [0,-11,13,2,26,15];
+      var mov41 = [0,13,11,24,22,35];
+
+      var mov12es = [15,26,2,13,-11,0];
+      var mov23es = [35,22,24,11,13,0];
+      var mov34es = [-15,-26,-2,-13,11,0];
+      var mov41es = [-35,-22,-24,-11,-13,0];
+
+      if (rotation == 1) {
+        if (position[0]%12 == 0 || position[0]%12 == 1) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov12es[i];
+          }
+        } else {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov12[i];
+          }
+        }
+      } else if (rotation == 2) {
+        if (position[0]-24 < 0) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov23es[i];
+          }
+        } else {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov23[i];
+          }
+        }
+      } else if (rotation == 3) {
+        if (position[0]%12 == 11 || position[0]%12 == 10) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov34es[i];
+          }
+        } else {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov34[i];
+          }
+        }
+      } else if (rotation == 4) {
+        if (position[4]+24 >= 156) {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov41es[i];
+          }
+        } else {
+          for(i = 0; i < position.length; i++){
+            result[i] = position[i] + mov41[i];
+          }
+        }
+      }
+
+      cards[index].pos = result;
+      if (rotation == 4) {
+        cards[index].rotation = 1;
+      } else {
+        cards[index].rotation = rotation + 1;
+      }
+      console.log(cards[index].rotation);
+    }
+
+    return cards
+  }
+
   class Game extends React.Component {
     render() {
       return (
 
         <div className="game">
-           <p id='title'>ORCHARD</p>
-          <div className="game-board">
-            <Board cards={cards}/>
+          <p id='title'>ORCHARD</p>
+
+          <div className="upper-zone">
+            <div className="game-board">
+              <Board cards={cards}/>
+            </div>
+            
+            <div className="buttons">
+              <button name="up" onClick={() => this.setState(changeUpDownLeftRight("up"))}><img src="img/up.png" height="75"/></button>
+              <button name="down" onClick={() => this.setState(changeUpDownLeftRight("down"))}><img src="img/down.png" height="75"/></button>
+              <button name="left" onClick={() => this.setState(changeUpDownLeftRight("left"))}><img src="img/left.png" height="75"/></button>
+              <button name="right" onClick={() => this.setState(changeUpDownLeftRight("right"))}><img src="img/right.png" height="75"/></button>
+              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="75"/></button>
+            </div>
           </div>
+
           <div className="game-info"> 
-           
+            
           </div>
-        
+
           <div className='cards'>{
               <ul id='lista1'>{cards.filter(z=>z.inUse==false).map(z=>{
                 return(

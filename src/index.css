@@ -32,6 +32,10 @@ body {
     text-align: center;
     width: 68px;
   }
+
+  .upper-zone {
+    display: flex;
+  }
   
   .square:focus {
     outline: none;
@@ -45,10 +49,19 @@ body {
     margin-left: 20px;
   }
 
-  .game-board{
+  .game-board {
     margin-top: 1% ;
     margin-left: 30% ;
     margin-bottom: 2% ;
+    float: left;
+  }
+
+  .buttons {
+    float: right;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
   }
   
   #lista1  ul{
