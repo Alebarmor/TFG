@@ -1,4 +1,5 @@
 import React from 'react';
+import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
 
@@ -15,167 +16,14 @@ enum Color {
   Yellow,
 }
 
-interface Cards {
-  id: number
-  img: string
-  pos: number
-  rotation: Rotation
-  trees: Color[]
-  inUse: boolean
-}
-
-
-const allCards={
+const gameData={
   "elements":[    
   {
-      "id":1,
-      "img":"img/1.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,1,1,2,3,3],
-      "inUse": false
-  },
-
-  {
-      "id":2,
-      "img":"img/2.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,1,2,3,3],
-      "inUse": false
-  },
-
-  {
-      "id":3,
-      "img":"img/3.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,1,3,3,1,2],
-      "inUse": false
-  },
-  {
-      "id":4,
-      "img":"img/4.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,3,3,1,2],
-      "inUse": false   
-  },
-  {
-      "id":5,
-      "img":"img/5.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,3,2,2,3,1],
-      "inUse": false   
-  },
-  {
-      "id":6,
-      "img":"img/6.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,1,2,2,3,1],
-      "inUse": false   
-  },
-  {
-      "id":7,
-      "img":"img/7.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,1,3,2,1,2],
-      "inUse": false   
-  },
-  {
-      "id":8,
-      "img":"img/8.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,1,2,3,1,2],
-      "inUse": false   
-  },
-  {
-      "id":9,
-      "img":"img/9.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,3,2,1,3,1],
-      "inUse": false   
-  },
-  {
-      "id":10,
-      "img":"img/10.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,3,1,2,3,1],
-      "inUse": false   
-  },
-  {
-      "id":11,
-      "img":"img/11.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,2,1,3,3,1],
-      "inUse": false   
-  },
-  {
-      "id":12,
-      "img":"img/12.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,2,1,3,1,3],
-      "inUse": false   
-  },
-  {
-      "id":13,
-      "img":"img/13.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,1,3,2,3],
-      "inUse": false   
-  },
-  {
-      "id":14,
-      "img":"img/14.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,3,1,2,3],
-      "inUse": false   
-  },
-  {
-      "id":15,
-      "img":"img/15.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,2,1,1,2,3],
-      "inUse": false   
-  },
-  {
-      "id":16,
-      "img":"img/16.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,3,1,1,2,3],
-      "inUse": false   
-  },
-  {
-      "id":17,
-      "img":"img/17.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,1,3,2,2,3],
-      "inUse": false   
-  },
-  {
-      "id":18,
-      "img":"img/18.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,1,3,2,3,2],
-      "inUse": false   
+      "score":0,
+      "turn":0,
   }
   ]
 }
-
 
 class Board extends React.Component<{cards:any }, { }> {
   renderSquare(i:number) {
@@ -383,6 +231,7 @@ lista = lista.sort(function() {return Math.random() - 0.5});
 let miarray = lista.slice(0,9);
 let arrayrandon = new Array;
 var cards=allCards.elements.filter(z=>miarray.includes(z.id));
+var game = gameData.elements
 
 class Square extends React.Component<{id:number, cards:any, cardsColor: number[], cardsPos: number[], cardsRot: number[] }, { }> {
    imag: string = "";
@@ -577,6 +426,23 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
     return cards
   }
 
+  function colocate() {
+    const beingUsed = cards.filter((card) => {
+      return card.inUse === true;
+    });
+
+    if (beingUsed.length != 0)
+    {
+      const index = cards.indexOf(beingUsed[0]);
+      cards[index].inUse = false;
+      cards[index].used = true;
+      cards[index].turn = game[0].turn
+      game[0].turn += 1
+    }
+
+    return cards
+  }
+
   class Game extends React.Component {
     render() {
       return (
@@ -595,6 +461,7 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
               <button name="left" onClick={() => this.setState(changeUpDownLeftRight("left"))}><img src="img/left.png" height="75"/></button>
               <button name="right" onClick={() => this.setState(changeUpDownLeftRight("right"))}><img src="img/right.png" height="75"/></button>
               <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="75"/></button>
+              <button name="colocate" onClick={() => this.setState(colocate)}>COLOCAR CARTA</button>
             </div>
           </div>
 
@@ -603,7 +470,7 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
           </div>
 
           <div className='cards'>{
-              <ul id='lista1'>{cards.filter(z=>z.inUse==false).map(z=>{
+              <ul id='lista1'>{cards.filter(z=>z.inUse==false&&z.used==false).map(z=>{
                 return(
                   <div>
                   <img src={z.img} alt="Site Logo" width={140
