@@ -175,36 +175,11 @@ const allCards={
   }
   ]
 }
-var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
-lista = lista.sort(function() {return Math.random() - 0.5});
 
-let miarray = lista.slice(0,9);
-let arrayrandon = new Array;
-var cards=allCards.elements.filter(z=>miarray.includes(z.id));
-
-class Square extends React.Component<{id:number, cards:any,cardsColor: number[],cardsPos: number[] }, { }> {
-   imag: string = "";
-    render() {
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsPos.push(x.pos.indexOf(this.props.id)));
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
-
-      if(this.props.cardsColor.includes(1)){this.imag="img/Color 01 - Red.png"}else{
-      if(this.props.cardsColor.includes(2)){this.imag="img/Color 02 - Purple.png"}else{
-      if(this.props.cardsColor.includes(3)){this.imag="img/Color 03 - Yellow.png"}else{
-       this.imag="img/blank.ico"
-      }
-    }}
-      return (
-        <button className="square">
-           {<img src={this.imag} height ="67" width="67" alt=''/>}
-        </button>
-      );
-    }
-  }
 
 class Board extends React.Component<{cards:any }, { }> {
   renderSquare(i:number) {
-    return <Square id={i} cards={cards} cardsColor={new Array} cardsPos={new Array}/>;
+    return <Square id={i} cards={cards} cardsColor={new Array} cardsPos={new Array} cardsRot={new Array} />;
   }
   
     render() {
@@ -399,6 +374,68 @@ class Board extends React.Component<{cards:any }, { }> {
       );
     }
   }
+
+
+
+var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+lista = lista.sort(function() {return Math.random() - 0.5});
+
+let miarray = lista.slice(0,9);
+let arrayrandon = new Array;
+var cards=allCards.elements.filter(z=>miarray.includes(z.id));
+
+class Square extends React.Component<{id:number, cards:any, cardsColor: number[], cardsPos: number[], cardsRot: number[] }, { }> {
+   imag: string = "";
+    render() {
+      this.props.cardsPos.length=0;
+      this.props.cardsColor.length=0;
+      this.props.cardsRot.length=0;
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsPos.push(x.pos.indexOf(this.props.id)));
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
+      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsRot.push(x.rotation));
+
+      if(this.props.cardsColor.includes(1)){this.imag="img/1."+this.props.cardsPos[0]+".png"}else{
+      if(this.props.cardsColor.includes(2)){this.imag="img/2."+this.props.cardsPos[0]+".png"}else{
+      if(this.props.cardsColor.includes(3)){this.imag="img/3."+this.props.cardsPos[0]+".png"}else{
+       this.imag="img/blank.ico"
+      }
+
+    }}
+    if(this.props.cardsRot.includes(1)||this.props.cardsRot.length==0){   
+      return (
+        <button className="square">
+           {<img src={this.imag} height ="66" width="66" alt='' />}
+        </button>
+      );
+    }
+
+    if(this.props.cardsRot.includes(2)){   
+      return (
+        <button className="square">
+           {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)"}} />}
+        </button>
+      );
+    }
+
+    if(this.props.cardsRot.includes(3)){   
+      return (
+        <button className="square">
+           {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)"}} />}
+        </button>
+      );
+    }
+
+    if(this.props.cardsRot.includes(4)){   
+      return (
+        <button className="square">
+           {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)"}} />}
+        </button>
+      );
+    }
+    
+  }
+  }
+
 
   function changePosition(newIndex: number) {
     const beingUsed = cards.filter((card) => {
