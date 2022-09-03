@@ -20,7 +20,7 @@ const gameData={
   "elements":[    
   {
       "score":0,
-      "turn":0,
+      "turn":1,
   }
   ]
 }
@@ -229,7 +229,6 @@ var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 lista = lista.sort(function() {return Math.random() - 0.5});
 
 let miarray = lista.slice(0,9);
-let arrayrandon = new Array;
 var cards=allCards.elements.filter(z=>miarray.includes(z.id));
 var game = gameData.elements
 
@@ -285,158 +284,170 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
   }
   }
 
-
-  function changePosition(newIndex: number) {
+  function indexOfCardInUse() {
     const beingUsed = cards.filter((card) => {
       return card.inUse === true;
     });
 
-    if (beingUsed.length != 0)
-    {
-      const oldIndex = cards.indexOf(beingUsed[0]);
-      cards[oldIndex].pos = [777,777,777,777,777,777];
-      cards[oldIndex].rotation = 1;
-      cards[oldIndex].inUse = false;
+    var index;
+
+    if (beingUsed.length != 0) {
+      index = cards.indexOf(beingUsed[0]);
+    } else {
+      index = 999;
     }
 
-    cards[newIndex].pos = [65,66,77,78,89,90];
-    cards[newIndex].inUse = true;
+    return index
+  }
+
+
+  function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta:
+    if (indexOfCardInUse() !== 999)               // en caso afirmativo, devuelve el índice la carta en
+    {                                             // uso; en caso negativo, devuelve 999.
+      cards[indexOfCardInUse()].pos = [777,777,777,777,777,777]; // Posición origen
+      cards[indexOfCardInUse()].rotation = 1;
+      cards[indexOfCardInUse()].inUse = false;
+    }
+
+    cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
+    cards[newCardIndex].inUse = true;
     return cards
   }
 
-  function changeUpDownLeftRight(direction:string) {
-    const beingUsed = cards.filter((card) => {
-      return card.inUse === true;
-    });
-
-    if (beingUsed.length != 0)
+  function move(direction: string) {
+    if (indexOfCardInUse() !== 999)
     {
-      const index = cards.indexOf(beingUsed[0]);
-      var position = cards[index].pos;
-      var result = cards[index].pos;
-      let i;
-      var horizontal = [1,1,1,1,1,1];
-      var vertical = [12,12,12,12,12,12]
+      var pos = cards[indexOfCardInUse()].pos;
+      var res = pos;
 
-      if (direction == "right") {
-        if (position[0]%12 != 11 && position[5]%12 != 11) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + horizontal[i];
+      var hrz = [1,1,1,1,1,1];       // Vector de movimiento horizontal
+      var vert = [12,12,12,12,12,12] // Vector de movimiento vertical
+
+      let limitHrz1 = pos[0]%12;  // En base al módulo base 12 de la posición de dos árboles (el primero y el
+      let limitHrz2 = pos[5]%12;  // último), podemos determinar si ha tocado alguna de las paredes horizontales,
+                                  // independientemente de la rotación en la que se encuentre la carta
+      switch (direction) {
+
+        case "right":
+          if (limitHrz1 !== 11 && limitHrz2 !== 11) {
+            for(let i = 0; i < pos.length; i++){
+              res[i] = pos[i] + hrz[i];
+            }
           }
-        }
-      } else if (direction == "left") {
-        if (position[0]%12 != 0 && position[5]%12 != 0) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] - horizontal[i];
+          break;
+
+        case "left":
+          if (limitHrz1 !== 0 && limitHrz2 !== 0) {
+            for(let i = 0; i < pos.length; i++){
+              res[i] = pos[i] - hrz[i];
+            }
           }
-        }
-      } else if (direction == "up") {
-        if (position[0]-12 >= 0 && position[5]-12 >= 0) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] - vertical[i];
+          break;
+
+        case "up":
+          if (pos[0]-12 >= 0 && pos[5]-12 >= 0) { // Para los límites verticales, con sumar o restar una fila,
+            for(let i = 0; i < pos.length; i++){  // podemos saber si se pasa de abajo o arriba, respectivamente
+              res[i] = pos[i] - vert[i];
+            }
           }
-        }
-      } else if (direction == "down") {
-        if (position[4]+12 < 156 && position[1]+12 < 156) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + vertical[i];
+          break;
+
+        case "down":
+          if (pos[0]+12 < 156 && pos[5]+12 < 156) {
+            for(let i = 0; i < pos.length; i++){
+              res[i] = pos[i] + vert[i];
+            }
           }
-        }
+          break;
       }
 
-      cards[index].pos = result;
+      cards[indexOfCardInUse()].pos = res;
     }
 
     return cards
   }
 
   function rotate() {
-    const beingUsed = cards.filter((card) => {
-      return card.inUse === true;
-    });
-
-    if (beingUsed.length != 0)
+    if (indexOfCardInUse() !== 999)
     {
-      const index = cards.indexOf(beingUsed[0]);
-      var position = cards[index].pos;
-      var result = cards[index].pos;
-      let rotation = cards[index].rotation;
+      var pos = cards[indexOfCardInUse()].pos;
+      var res = cards[indexOfCardInUse()].pos;
+      let rotation = cards[indexOfCardInUse()].rotation;
       let i;
-      var mov12 = [0,11,-13,-2,-26,-15];
-      var mov23 = [0,-13,-11,-24,-22,-35];
-      var mov34 = [0,-11,13,2,26,15];
-      var mov41 = [0,13,11,24,22,35];
 
-      var mov12es = [15,26,2,13,-11,0];
-      var mov23es = [35,22,24,11,13,0];
-      var mov34es = [-15,-26,-2,-13,11,0];
-      var mov41es = [-35,-22,-24,-11,-13,0];
+      var vert2hrz = [0,11,-13,-2,-26,-15];
+      var hrz2vert = [0,-13,-11,-24,-22,-35];
 
-      if (rotation == 1) {
-        if (position[0]%12 == 0 || position[0]%12 == 1) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov12es[i];
+      switch(rotation) {
+        
+        case 1:
+          if (pos[0]%12 == 0 || pos[0]%12 == 1) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - vert2hrz[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + vert2hrz[i];
+            }
           }
-        } else {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov12[i];
+          break;
+        
+        case 2:
+          if (pos[0]-24 < 0) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - hrz2vert[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + hrz2vert[i];
+            }
           }
-        }
-      } else if (rotation == 2) {
-        if (position[0]-24 < 0) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov23es[i];
+          break;
+
+        case 3:
+          if (pos[0]%12 == 11 || pos[0]%12 == 10) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + vert2hrz[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - vert2hrz[i];
+            }
           }
-        } else {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov23[i];
+          break;
+        
+        case 4:
+          if (pos[4]+24 >= 156) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + hrz2vert[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - hrz2vert[i];
+            }
           }
-        }
-      } else if (rotation == 3) {
-        if (position[0]%12 == 11 || position[0]%12 == 10) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov34es[i];
-          }
-        } else {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov34[i];
-          }
-        }
-      } else if (rotation == 4) {
-        if (position[4]+24 >= 156) {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov41es[i];
-          }
-        } else {
-          for(i = 0; i < position.length; i++){
-            result[i] = position[i] + mov41[i];
-          }
-        }
+          break;
       }
 
-      cards[index].pos = result;
+      cards[indexOfCardInUse()].pos = res;
+      
       if (rotation == 4) {
-        cards[index].rotation = 1;
+        cards[indexOfCardInUse()].rotation = 1;
       } else {
-        cards[index].rotation = rotation + 1;
+        cards[indexOfCardInUse()].rotation = rotation + 1;
       }
-      console.log(cards[index].rotation);
+
     }
 
     return cards
   }
 
   function colocate() {
-    const beingUsed = cards.filter((card) => {
-      return card.inUse === true;
-    });
-
-    if (beingUsed.length != 0)
+    if (indexOfCardInUse() != 999)
     {
-      const index = cards.indexOf(beingUsed[0]);
-      cards[index].inUse = false;
-      cards[index].used = true;
-      cards[index].turn = game[0].turn
+      cards[indexOfCardInUse()].inUse = false;
+      cards[indexOfCardInUse()].used = true;
+      cards[indexOfCardInUse()].turn = game[0].turn
       game[0].turn += 1
     }
 
@@ -456,11 +467,11 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
             </div>
             
             <div className="buttons">
-              <button name="up" onClick={() => this.setState(changeUpDownLeftRight("up"))}><img src="img/up.png" height="75"/></button>
-              <button name="down" onClick={() => this.setState(changeUpDownLeftRight("down"))}><img src="img/down.png" height="75"/></button>
-              <button name="left" onClick={() => this.setState(changeUpDownLeftRight("left"))}><img src="img/left.png" height="75"/></button>
-              <button name="right" onClick={() => this.setState(changeUpDownLeftRight("right"))}><img src="img/right.png" height="75"/></button>
-              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="75"/></button>
+              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60"/></button>
+              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60"/></button>
+              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60"/></button>
+              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60"/></button>
+              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60"/></button>
               <button name="colocate" onClick={() => this.setState(colocate)}>COLOCAR CARTA</button>
             </div>
           </div>
@@ -474,7 +485,7 @@ class Square extends React.Component<{id:number, cards:any, cardsColor: number[]
                 return(
                   <div>
                   <img src={z.img} alt="Site Logo" width={140
-                  } onClick={() => this.setState(changePosition(cards.indexOf(z)))}></img>
+                  } onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}></img>
                   </div>
                 ) 
               }) 
