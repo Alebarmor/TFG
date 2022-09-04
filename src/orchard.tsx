@@ -237,7 +237,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
    cardRot: number=0;
 
     render() {
-      var cardsIn=cards.filter(x=>x.pos.includes(this.props.id)).sort((x,b)=>x.turn+b.turn);
+      var cardsIn=cards.filter(x=>x.pos.includes(this.props.id)).sort((x,b)=>{return b.turn-x.turn});
       var alloCard=cardsIn[0];
       var cardPos=0;
       var cardColor=0;
@@ -301,15 +301,18 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
 
   function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta:
-    if (indexOfCardInUse() !== 999)               // en caso afirmativo, devuelve el índice la carta en
-    {                                             // uso; en caso negativo, devuelve 999.
+    if (indexOfCardInUse() !== 999)               // en caso afirmativo, devuelve el índice la carta en 
+{                                             // uso; en caso negativo, devuelve 999.
       cards[indexOfCardInUse()].pos = [777,777,777,777,777,777]; // Posición origen
       cards[indexOfCardInUse()].rotation = 1;
+      cards[indexOfCardInUse()].turn = 0;
       cards[indexOfCardInUse()].inUse = false;
     }
 
     cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
+    cards[newCardIndex].turn = game[0].turn;
     cards[newCardIndex].inUse = true;
+    console.log(cards)
     return cards
   }
 
@@ -444,12 +447,13 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function colocate() {
     if (indexOfCardInUse() != 999)
     {
-      cards[indexOfCardInUse()].inUse = false;
       cards[indexOfCardInUse()].used = true;
-      cards[indexOfCardInUse()].turn = game[0].turn
+      cards[indexOfCardInUse()].turn = game[0].turn;
+      cards[indexOfCardInUse()].inUse = false;
       game[0].turn += 1
     }
-
+    
+    console.log(cards)
     return cards
   }
 
