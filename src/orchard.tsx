@@ -312,7 +312,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
     cards[newCardIndex].turn = game[0].turn;
     cards[newCardIndex].inUse = true;
-    console.log(cards)
     return cards
   }
 
@@ -444,6 +443,23 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return cards
   }
 
+  function actScore() {
+    var res=0;
+    for (let n = 0; n <=155 ; n++) {
+      var cards2=cards.filter(x=>x.pos.includes(n));
+        if (cards2.length>1) {
+          for (let c = 1; c <=3 ; c++) {
+            var cards3 = cards2.filter(x=>x.trees[x.pos.indexOf(n)]===c);
+            if (cards3.length===cards2.length) {
+              res = res + cards3.length;
+            }
+          }
+        }
+    }
+    console.log("res= "+res);
+    return res;
+  }
+
   function colocate() {
     if (indexOfCardInUse() != 999)
     {
@@ -453,8 +469,9 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       game[0].turn += 1
     }
     
-    console.log(cards)
-    return cards
+    game[0].score = actScore();
+    console.log(game);
+    return cards;
   }
 
   class Game extends React.Component {
