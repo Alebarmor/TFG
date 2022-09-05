@@ -21,6 +21,7 @@ const gameData={
   {
       "score":0,
       "turn":1,
+      "scoreList": [1, 3, 6, 10]
   }
   ]
 }
@@ -300,9 +301,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
 
-  function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta:
-    if (indexOfCardInUse() !== 999)               // en caso afirmativo, devuelve el índice la carta en 
-{                                             // uso; en caso negativo, devuelve 999.
+  function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta: en caso afirmativo,
+    if (indexOfCardInUse() !== 999) {             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
       cards[indexOfCardInUse()].pos = [777,777,777,777,777,777]; // Posición origen
       cards[indexOfCardInUse()].rotation = 1;
       cards[indexOfCardInUse()].turn = 0;
@@ -444,19 +444,23 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function actScore() {
-    var res=0;
-    for (let n = 0; n <=155 ; n++) {
-      var cards2=cards.filter(x=>x.pos.includes(n));
-        if (cards2.length>1) {
-          for (let c = 1; c <=3 ; c++) {
+    var res = 0;
+    for (let n = 0; n <= 155 ; n++) {
+      var cards2 = cards.filter(x=>x.pos.includes(n));
+        if (cards2.length > 1) {
+          for (let c = 1; c <= 3 ; c++) {
             var cards3 = cards2.filter(x=>x.trees[x.pos.indexOf(n)]===c);
-            if (cards3.length===cards2.length) {
-              res = res + cards3.length;
+            if (cards3.length === cards2.length) {
+              var i = cards3.length - 2;
+              if (i > 4) {
+                i = 4;
+              }
+              res = res + game[0].scoreList[i];
             }
           }
         }
     }
-    console.log("res= "+res);
+    console.log("Score = " + res);
     return res;
   }
 
@@ -479,25 +483,36 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       return (
 
         <div className="game">
-          <p id='title'>ORCHARD</p>
+          <div className='logo'>
+            <img src="img/Title.png" width="300" alt="Logo"/>
+          </div>
 
-          <div className="upper-zone">
+          <div className="game-info">
+            <p>Turn: </p>
+            <p>Score:</p>
+          </div>
+
+          <div className="center-container">
             <div className="game-board">
               <Board cards={cards}/>
             </div>
             
-            <div className="buttons">
-              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60"/></button>
-              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60"/></button>
-              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60"/></button>
-              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60"/></button>
+            <div className="button-container">
               <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60"/></button>
-              <button name="colocate" onClick={() => this.setState(colocate)}>COLOCAR CARTA</button>
+              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60"/></button>
             </div>
-          </div>
 
-          <div className="game-info"> 
-            
+            <div className="button-container">
+              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60"/></button>
+              <button name="colocate" onClick={() => this.setState(colocate)}><img src="img/target.png" height="60"/></button>
+              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60"/></button>
+            </div>
+
+            <div className="button-container">
+              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60"/></button>
+              <button name="rules"><img src="img/rules-vector.jpg" height="60"/></button>
+            </div>
+
           </div>
 
           <div className='cards'>{
