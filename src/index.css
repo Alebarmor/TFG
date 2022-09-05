@@ -33,7 +33,7 @@ body {
     width: 68px;
   }
 
-  .upper-zone {
+  .center-container {
     display: flex;
   }
   
@@ -46,18 +46,19 @@ body {
   }
   
   .game-info {
-    margin-left: 20px;
+    float: right;
+    margin-right: 10%;
   }
 
   .game-board {
     margin-top: 1% ;
-    margin-left: 30% ;
+    margin-left: 10% ;
     margin-bottom: 2% ;
     float: left;
   }
 
-  .buttons {
-    float: right;
+  .button-container {
+    float: bottom;
     margin-left: auto;
     margin-right: auto;
     margin-top: auto;
@@ -75,9 +76,6 @@ body {
   ;
 }
 
-#title{
-  font: "";
+.logo{
   text-align: center;
-  font-size: 50px;
-  color: rgb(200, 211, 40);
 }
