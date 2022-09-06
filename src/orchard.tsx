@@ -1,5 +1,4 @@
 import React from 'react';
-import ImageModal from 'react-native-image-modal';
 import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
