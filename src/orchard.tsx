@@ -476,8 +476,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           </div>
 
           <div className="game-info">
-            <p>Turn:</p>
-            <p>Score:</p>
           </div>
 
           <div className="center-container">
