@@ -1,20 +1,8 @@
 import React from 'react';
+import ImageModal from 'react-native-image-modal';
 import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
-
-enum Rotation {
-  Up = 1,
-  Right,
-  Down,
-  Left,
-}
-
-enum Color { 
-  Red = 1,
-  Purple,
-  Yellow,
-}
 
 const gameData={
   "elements":[    
@@ -291,7 +279,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
     var index;
 
-    if (beingUsed.length != 0) {
+    if (beingUsed.length !== 0) {
       index = cards.indexOf(beingUsed[0]);
     } else {
       index = 999;
@@ -382,7 +370,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       switch(rotation) {
         
         case 1:
-          if (pos[0]%12 == 0 || pos[0]%12 == 1) {
+          if (pos[0]%12 === 0 || pos[0]%12 === 1) {
             for(i = 0; i < pos.length; i++){
               res[i] = pos[i] - vert2hrz[pos.length - i - 1];
             }
@@ -406,7 +394,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           break;
 
         case 3:
-          if (pos[0]%12 == 11 || pos[0]%12 == 10) {
+          if (pos[0]%12 === 11 || pos[0]%12 === 10) {
             for(i = 0; i < pos.length; i++){
               res[i] = pos[i] + vert2hrz[pos.length - i - 1];
             }
@@ -432,7 +420,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
       cards[indexOfCardInUse()].pos = res;
       
-      if (rotation == 4) {
+      if (rotation === 4) {
         cards[indexOfCardInUse()].rotation = 1;
       } else {
         cards[indexOfCardInUse()].rotation = rotation + 1;
@@ -451,11 +439,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           for (let c = 1; c <= 3 ; c++) {
             var cards3 = cards2.filter(x=>x.trees[x.pos.indexOf(n)]===c);
             if (cards3.length === cards2.length) {
-              var i = cards3.length - 2;
+              var i = cards3.length - 1;
               if (i > 4) {
                 i = 4;
               }
-              res = res + game[0].scoreList[i];
+              res = res + game[0].scoreList[i-1];
             }
           }
         }
@@ -465,7 +453,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function colocate() {
-    if (indexOfCardInUse() != 999)
+    if (indexOfCardInUse() !== 999)
     {
       cards[indexOfCardInUse()].used = true;
       cards[indexOfCardInUse()].turn = game[0].turn;
@@ -481,14 +469,14 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   class Game extends React.Component {
     render() {
       return (
-
+        
         <div className="game">
           <div className='logo'>
             <img src="img/Title.png" width="300" alt="Logo"/>
           </div>
 
           <div className="game-info">
-            <p>Turn: </p>
+            <p>Turn:</p>
             <p>Score:</p>
           </div>
 
@@ -498,25 +486,25 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
             </div>
             
             <div className="button-container">
-              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60"/></button>
-              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60"/></button>
+              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60" alt="Rotate"/></button>
+              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60" alt="Up"/></button>
             </div>
 
             <div className="button-container">
-              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60"/></button>
-              <button name="colocate" onClick={() => this.setState(colocate)}><img src="img/target.png" height="60"/></button>
-              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60"/></button>
+              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60" alt="Left"/></button>
+              <button name="colocate" onClick={() => this.setState(colocate)}><img src="img/target.png" height="60" alt="Colocate"/></button>
+              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60" alt="Right"/></button>
             </div>
 
             <div className="button-container">
-              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60"/></button>
-              <button name="rules"><img src="img/rules-vector.jpg" height="60"/></button>
+              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60" alt="Down"/></button>
+              <button name="rules"><img src="img/rules-vector.jpg" height="60" alt="Rules vector"/></button>
             </div>
 
           </div>
 
-          <div className='cards'>{
-              <ul id='lista1'>{cards.filter(z=>z.inUse==false&&z.used==false).map(z=>{
+          <div className="cards">{
+              <ul id='lista1'>{cards.filter(z => z.inUse === false && z.used === false).map(z => {
                 return(
                   <div>
                   <img src={z.img} alt="Site Logo" width={140

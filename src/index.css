@@ -46,8 +46,11 @@ body {
   }
   
   .game-info {
-    float: right;
+    float: left;
     margin-right: 10%;
+    font-size: large;
+    font-family: sans-serif
+
   }
 
   .game-board {
@@ -66,16 +69,14 @@ body {
   }
   
   #lista1  ul{
-   
     list-style-type: none;
-}
+  }
 
-#lista1  img{
-  float: left;
-  padding: 1.2%
-  ;
-}
+  #lista1  img{
+    float: left;
+    padding: 1.2%;
+  }
 
-.logo{
-  text-align: center;
-}
+  .logo{
+    text-align: center;
+  }
