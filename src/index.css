@@ -20,7 +20,7 @@ body {
   
   .square {
     background: rgba(143, 206, 60, 0.678);
-    border: 1px solid rgb(85, 155, 6);
+    border: 0.5px solid rgb(85, 155, 6);
     float: left;
     font-size: 24px;
     font-weight: bold;
@@ -32,6 +32,10 @@ body {
     text-align: center;
     width: 68px;
   }
+
+  .center-container {
+    display: flex;
+  }
   
   .square:focus {
     outline: none;
@@ -42,29 +46,37 @@ body {
   }
   
   .game-info {
-    margin-left: 20px;
+    float: left;
+    margin-right: 10%;
+    font-size: large;
+    font-family: sans-serif
+
   }
 
-  .game-board{
+  .game-board {
     margin-top: 1% ;
-    margin-left: 30% ;
+    margin-left: 10% ;
     margin-bottom: 2% ;
+    float: left;
+  }
+
+  .button-container {
+    float: bottom;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
   }
   
   #lista1  ul{
-   
     list-style-type: none;
-}
+  }
 
-#lista1  img{
-  float: left;
-  padding: 1.2%
-  ;
-}
+  #lista1  img{
+    float: left;
+    padding: 1.2%;
+  }
 
-#title{
-  font: "";
-  text-align: center;
-  font-size: 50px;
-  color: rgb(200, 211, 40);
-}
+  .logo{
+    text-align: center;
+  }

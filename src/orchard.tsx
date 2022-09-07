@@ -1,214 +1,25 @@
 import React from 'react';
+import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
 
-enum Rotation {
-  Up = 1,
-  Right,
-  Down,
-  Left,
-}
-
-enum Color { 
-  Red = 1,
-  Purple,
-  Yellow,
-}
-
-interface Cards {
-  id: number
-  img: string
-  pos: number
-  rotation: Rotation
-  trees: Color[]
-  inUse: boolean
-}
-
-
-const allCards={
+const gameData={
   "elements":[    
   {
-      "id":1,
-      "img":"img/1.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,1,1,2,3,3],
-      "inUse": false
-  },
-
-  {
-      "id":2,
-      "img":"img/2.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,1,2,3,3],
-      "inUse": false
-  },
-
-  {
-      "id":3,
-      "img":"img/3.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,1,3,3,1,2],
-      "inUse": false
-  },
-  {
-      "id":4,
-      "img":"img/4.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,3,3,1,2],
-      "inUse": false   
-  },
-  {
-      "id":5,
-      "img":"img/5.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,3,2,2,3,1],
-      "inUse": false   
-  },
-  {
-      "id":6,
-      "img":"img/6.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,1,2,2,3,1],
-      "inUse": false   
-  },
-  {
-      "id":7,
-      "img":"img/7.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,1,3,2,1,2],
-      "inUse": false   
-  },
-  {
-      "id":8,
-      "img":"img/8.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,1,2,3,1,2],
-      "inUse": false   
-  },
-  {
-      "id":9,
-      "img":"img/9.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,3,2,1,3,1],
-      "inUse": false   
-  },
-  {
-      "id":10,
-      "img":"img/10.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,3,1,2,3,1],
-      "inUse": false   
-  },
-  {
-      "id":11,
-      "img":"img/11.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,2,1,3,3,1],
-      "inUse": false   
-  },
-  {
-      "id":12,
-      "img":"img/12.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,2,1,3,1,3],
-      "inUse": false   
-  },
-  {
-      "id":13,
-      "img":"img/13.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,1,3,2,3],
-      "inUse": false   
-  },
-  {
-      "id":14,
-      "img":"img/14.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,2,3,1,2,3],
-      "inUse": false   
-  },
-  {
-      "id":15,
-      "img":"img/15.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[3,2,1,1,2,3],
-      "inUse": false   
-  },
-  {
-      "id":16,
-      "img":"img/16.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[2,3,1,1,2,3],
-      "inUse": false   
-  },
-  {
-      "id":17,
-      "img":"img/17.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,1,3,2,2,3],
-      "inUse": false   
-  },
-  {
-      "id":18,
-      "img":"img/18.png",
-      "pos":[777,777,777,777,777,777],
-      "rotation":1,
-      "trees":[1,1,3,2,3,2],
-      "inUse": false   
+      "score":0,
+      "turn":1,
+      "scoreList": [1, 3, 6, 10]
   }
   ]
 }
-var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
-lista = lista.sort(function() {return Math.random() - 0.5});
-
-let miarray = lista.slice(0,9);
-let arrayrandon = new Array;
-var cards=allCards.elements.filter(z=>miarray.includes(z.id));
-
-class Square extends React.Component<{id:number, cards:any,cardsColor: number[],cardsPos: number[] }, { }> {
-   imag: string = "";
-    render() {
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsPos.push(x.pos.indexOf(this.props.id)));
-      cards.filter(x=>x.pos.includes(this.props.id)).forEach(x=>this.props.cardsColor.push(x.trees[x.pos.indexOf(this.props.id)]));
-
-      if(this.props.cardsColor.includes(1)){this.imag="img/Color 01 - Red.png"}else{
-      if(this.props.cardsColor.includes(2)){this.imag="img/Color 02 - Purple.png"}else{
-      if(this.props.cardsColor.includes(3)){this.imag="img/Color 03 - Yellow.png"}else{
-       this.imag="img/blank.ico"
-      }
-    }}
-      return (
-        <button className="square">
-           {<img src={this.imag} height ="67" width="67" alt=''/>}
-        </button>
-      );
-    }
-  }
 
 class Board extends React.Component<{cards:any }, { }> {
   renderSquare(i:number) {
-    return <Square id={i} cards={cards} cardsColor={new Array} cardsPos={new Array}/>;
+    return <Square id={i} cards={cards}/>;
   }
   
     render() {
-      const status = 'Next player: X';
+      //const status = 'Next player: X';
       return (
         <div>
           <div className="status">{}</div>
@@ -400,42 +211,301 @@ class Board extends React.Component<{cards:any }, { }> {
     }
   }
 
-  function changePosition(newIndex: number) {
+
+
+var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+lista = lista.sort(function() {return Math.random() - 0.5});
+
+let miarray = lista.slice(0,9);
+var cards=allCards.elements.filter(z=>miarray.includes(z.id));
+var game = gameData.elements
+
+class Square extends React.Component<{id:number, cards:any}, { }> {
+   imag: string="";
+   cardRot: number=0;
+
+    render() {
+      var cardsIn=cards.filter(x=>x.pos.includes(this.props.id)).sort((x,b)=>{return b.turn-x.turn});
+      var alloCard=cardsIn[0];
+      var cardPos=0;
+      var cardColor=0;
+      if(alloCard!==undefined){
+        cardPos=alloCard.pos.indexOf(this.props.id)
+        cardColor=alloCard.trees[cardPos];
+        this.cardRot=alloCard.rotation;
+      }
+      
+      cardColor!==0?this.imag="img/"+cardColor+"."+cardPos+".png":this.imag="img/blank.ico"
+
+      switch (this.cardRot) {
+        case 2:
+        return (
+          <button className="square">
+             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)"}} />}
+          </button>
+        );  
+  
+        case 3:
+        return (
+          <button className="square">
+             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)"}} />}
+          </button>
+        );  
+  
+        case 4:
+        return (
+          <button className="square">
+             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)"}} />}
+          </button>
+        );  
+      
+        default:
+          return (
+            <button className="square">
+               {<img src={this.imag} height ="66" width="66" alt='' />}
+            </button>
+          );  
+      }
+
+    
+  }
+  }
+
+  function indexOfCardInUse() {
     const beingUsed = cards.filter((card) => {
       return card.inUse === true;
     });
 
-    if (beingUsed.length != 0)
-    {
-      const oldIndex = cards.indexOf(beingUsed[0]);
-      cards[oldIndex].pos = [777,777,777,777,777,777];
-      cards[oldIndex].inUse = false;
+    var index;
+
+    if (beingUsed.length !== 0) {
+      index = cards.indexOf(beingUsed[0]);
+    } else {
+      index = 999;
     }
 
-    cards[newIndex].pos = [65,66,77,78,89,90];
-    cards[newIndex].inUse = true;
+    return index
+  }
+
+
+  function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta: en caso afirmativo,
+    if (indexOfCardInUse() !== 999) {             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
+      cards[indexOfCardInUse()].pos = [777,777,777,777,777,777]; // Posición origen
+      cards[indexOfCardInUse()].rotation = 1;
+      cards[indexOfCardInUse()].turn = 0;
+      cards[indexOfCardInUse()].inUse = false;
+    }
+
+    cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
+    cards[newCardIndex].turn = game[0].turn;
+    cards[newCardIndex].inUse = true;
     return cards
+  }
+
+  function move(direction: string) {
+    if (indexOfCardInUse() !== 999)
+    {
+      var pos = cards[indexOfCardInUse()].pos;
+      var res = pos;
+
+      var hrz = [1,1,1,1,1,1];       // Vector de movimiento horizontal
+      var vert = [12,12,12,12,12,12] // Vector de movimiento vertical
+
+      let limitHrz1 = pos[0]%12;  // En base al módulo base 12 de la posición de dos árboles (el primero y el
+      let limitHrz2 = pos[5]%12;  // último), podemos determinar si ha tocado alguna de las paredes horizontales,
+                                  // independientemente de la rotación en la que se encuentre la carta
+      switch (direction) {
+
+        case "right":
+          if (limitHrz1 !== 11 && limitHrz2 !== 11) {
+            for(let i = 0; i < pos.length; i++){
+              res[i] = pos[i] + hrz[i];
+            }
+          }
+          break;
+
+        case "left":
+          if (limitHrz1 !== 0 && limitHrz2 !== 0) {
+            for(let i = 0; i < pos.length; i++){
+              res[i] = pos[i] - hrz[i];
+            }
+          }
+          break;
+
+        case "up":
+          if (pos[0]-12 >= 0 && pos[5]-12 >= 0) { // Para los límites verticales, con sumar o restar una fila,
+            for(let i = 0; i < pos.length; i++){  // podemos saber si se pasa de abajo o arriba, respectivamente
+              res[i] = pos[i] - vert[i];
+            }
+          }
+          break;
+
+        case "down":
+          if (pos[0]+12 < 156 && pos[5]+12 < 156) {
+            for(let i = 0; i < pos.length; i++){
+              res[i] = pos[i] + vert[i];
+            }
+          }
+          break;
+      }
+
+      cards[indexOfCardInUse()].pos = res;
+    }
+
+    return cards
+  }
+
+  function rotate() {
+    if (indexOfCardInUse() !== 999)
+    {
+      var pos = cards[indexOfCardInUse()].pos;
+      var res = cards[indexOfCardInUse()].pos;
+      let rotation = cards[indexOfCardInUse()].rotation;
+      let i;
+
+      var vert2hrz = [0,11,-13,-2,-26,-15];
+      var hrz2vert = [0,-13,-11,-24,-22,-35];
+
+      switch(rotation) {
+        
+        case 1:
+          if (pos[0]%12 === 0 || pos[0]%12 === 1) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - vert2hrz[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + vert2hrz[i];
+            }
+          }
+          break;
+        
+        case 2:
+          if (pos[0]-24 < 0) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - hrz2vert[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + hrz2vert[i];
+            }
+          }
+          break;
+
+        case 3:
+          if (pos[0]%12 === 11 || pos[0]%12 === 10) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + vert2hrz[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - vert2hrz[i];
+            }
+          }
+          break;
+        
+        case 4:
+          if (pos[4]+24 >= 156) {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] + hrz2vert[pos.length - i - 1];
+            }
+          } else {
+            for(i = 0; i < pos.length; i++){
+              res[i] = pos[i] - hrz2vert[i];
+            }
+          }
+          break;
+      }
+
+      cards[indexOfCardInUse()].pos = res;
+      
+      if (rotation === 4) {
+        cards[indexOfCardInUse()].rotation = 1;
+      } else {
+        cards[indexOfCardInUse()].rotation = rotation + 1;
+      }
+
+    }
+
+    return cards
+  }
+
+  function actScore() {
+    var res = 0;
+    for (let n = 0; n <= 155 ; n++) {
+      var cards2 = cards.filter(x=>x.pos.includes(n));
+        if (cards2.length > 1) {
+          for (let c = 1; c <= 3 ; c++) {
+            var cards3 = cards2.filter(x=>x.trees[x.pos.indexOf(n)]===c);
+            if (cards3.length === cards2.length) {
+              var i = cards3.length - 1;
+              if (i > 4) {
+                i = 4;
+              }
+              res = res + game[0].scoreList[i-1];
+            }
+          }
+        }
+    }
+    console.log("Score = " + res);
+    return res;
+  }
+
+  function colocate() {
+    if (indexOfCardInUse() !== 999)
+    {
+      cards[indexOfCardInUse()].used = true;
+      cards[indexOfCardInUse()].turn = game[0].turn;
+      cards[indexOfCardInUse()].inUse = false;
+      game[0].turn += 1
+    }
+    
+    game[0].score = actScore();
+    console.log(game);
+    return cards;
   }
 
   class Game extends React.Component {
     render() {
       return (
-
-        <div className="game">
-           <p id='title'>ORCHARD</p>
-          <div className="game-board">
-            <Board cards={cards}/>
-          </div>
-          <div className="game-info"> 
-           
-          </div>
         
-          <div className='cards'>{
-              <ul id='lista1'>{cards.filter(z=>z.inUse==false).map(z=>{
+        <div className="game">
+          <div className='logo'>
+            <img src="img/Title.png" width="300" alt="Logo"/>
+          </div>
+
+          <div className="game-info">
+          </div>
+
+          <div className="center-container">
+            <div className="game-board">
+              <Board cards={cards}/>
+            </div>
+            
+            <div className="button-container">
+              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60" alt="Rotate"/></button>
+              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60" alt="Up"/></button>
+            </div>
+
+            <div className="button-container">
+              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60" alt="Left"/></button>
+              <button name="colocate" onClick={() => this.setState(colocate)}><img src="img/target.png" height="60" alt="Colocate"/></button>
+              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60" alt="Right"/></button>
+            </div>
+
+            <div className="button-container">
+              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60" alt="Down"/></button>
+              <button name="rules"><img src="img/rules-vector.jpg" height="60" alt="Rules vector"/></button>
+            </div>
+
+          </div>
+
+          <div className="cards">{
+              <ul id='lista1'>{cards.filter(z => z.inUse === false && z.used === false).map(z => {
                 return(
                   <div>
                   <img src={z.img} alt="Site Logo" width={140
-                  } onClick={() => this.setState(changePosition(cards.indexOf(z)))}></img>
+                  } onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}></img>
                   </div>
                 ) 
               }) 
