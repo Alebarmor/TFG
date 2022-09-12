@@ -2,7 +2,27 @@ import React from 'react';
 import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
-import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon  } from '@chakra-ui/react'
+import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, Portal, useDisclosure  } from '@chakra-ui/react'
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+} from '@chakra-ui/react'
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight } from "react-icons/bi";
 
@@ -474,6 +494,33 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return cards;
   }
 
+  function BasicUsage() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    return (
+      <>
+        <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
+  
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Image alt='Rules' src='img/rules.png' w='auto' h='400px'/>
+            </ModalBody>
+  
+            <ModalFooter>
+              <Button colorScheme='blue' mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button variant='ghost'>Secondary Action</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    )
+  }
+
   class Game extends React.Component {
     render() {
       return (
@@ -485,7 +532,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
             <Container maxW='1xl' centerContent pt='25px' pb='25px'>
               <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
             </Container>
-            
+                        
             <HStack pb='5px'>
               <Container maxW='1xl' centerContent>
                 <Box>
