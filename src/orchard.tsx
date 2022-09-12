@@ -2,7 +2,9 @@ import React from 'react';
 import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
-import { Box, Image, Button, ButtonGroup, Stack, Flex, Spacer, Wrap, WrapItem, ChakraProvider } from '@chakra-ui/react'
+import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon  } from '@chakra-ui/react'
+import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
+import { BiTargetLock, BiRotateRight } from "react-icons/bi";
 
 const gameData={
   "elements":[    
@@ -480,55 +482,55 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
           <Box bg='rgb(143, 206, 60, 0.678)'>
 
-            <Box boxSize='300px'>
-              <Image alt='Logo' src='img/Title.png'/>
-            </Box>
-
-            <Stack direction='row' spacing={250} >
-              
-              <Box paddingLeft={250}>
-                <Board cards={cards}/>
-              </Box>
-
-              <Stack direction='column' spacing={6} py='350'>
-
-                <Box display='flex' alignItems='center' justifyContent='left' width='100%'>
-                  <ButtonGroup gap='2'>
-                    <Button size='lg' colorScheme='teal' variant='outline' onClick={() => this.setState(rotate)}>Rotate</Button>
-                    <Button size='lg' colorScheme='teal' variant='outline' onClick={() => this.setState(move("up"))}>Up</Button>
-                  </ButtonGroup>
+            <Container maxW='1xl' centerContent pt='25px' pb='25px'>
+              <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
+            </Container>
+            
+            <HStack pb='5px'>
+              <Container maxW='1xl' centerContent>
+                <Box>
+                  <Board cards={cards}/>
                 </Box>
+              </Container>
 
-                <Box display='flex' alignItems='center' justifyContent='center' width='100%'>
-                  <ButtonGroup gap='2'>
-                    <Button size='lg' colorScheme='teal' variant='outline' onClick={() => this.setState(move("left"))}>Left</Button>
-                    <Button size='lg' colorScheme='teal' variant='outline' onClick={() => this.setState(colocate)}>Colocate</Button>
-                    <Button size='lg' colorScheme='teal' variant='outline' onClick={() => this.setState(move("right"))}>Right</Button>
-                  </ButtonGroup>
-                </Box>
+              <Container maxW='1xl' centerContent>
+                <Stack direction='column' spacing={6}>
+                  <Box display='flex' justifyContent='left'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' variant='solid' onClick={() => this.setState(rotate)}>Rotate</Button>
+                      <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' variant='solid' onClick={() => this.setState(move("up"))}>Up</Button>
+                    </ButtonGroup>
+                  </Box>
 
-                <Box display='flex' alignItems='center' justifyContent='right' width='100%'>
-                  <ButtonGroup gap='2'>
-                    <Button size='lg' colorScheme='teal' variant='outline' onClick={() => this.setState(move("down"))}>Right</Button>
-                    <Button size='lg' colorScheme='teal' variant='outline'>Rules</Button>
-                  </ButtonGroup>
-                </Box>
+                  <Box display='flex' justifyContent='center'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={FiArrowLeft}/>} size='md' colorScheme='red' variant='solid' onClick={() => this.setState(move("left"))}>Left</Button>
+                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' variant='solid' onClick={() => this.setState(colocate)}>Colocate</Button>
+                      <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' variant='solid' onClick={() => this.setState(move("right"))}>Right</Button>
+                    </ButtonGroup>
+                  </Box>
 
-             </Stack>
+                  <Box display='flex' justifyContent='right'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' variant='solid' onClick={() => this.setState(move("down"))}>Down</Button>
+                      <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid'>Rules</Button>
+                    </ButtonGroup>
+                  </Box>
+                </Stack>
+              </Container>
+            </HStack>
 
-            </Stack>
-
-            <div className="cards">{
-              <ul id='lista1'>{cards.filter(z => z.inUse === false && z.used === false).map(z => {
-                return(
-                  <div>
-                  <img src={z.img} alt="Site Logo" width={140
-                  } onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}></img>
-                  </div>
-                ) 
-              }) 
-              }</ul>
-            }</div>
+            <Box>{
+              <UnorderedList>
+                <HStack pt='25px' pb='25px'>
+                  {cards.filter(z => z.inUse === false && z.used === false).map(z => { return(
+                    <Container centerContent>
+                      <Image alt='Card' width='140px' src={z.img} onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}/>
+                    </Container>
+                  )})}
+                </HStack>
+              </UnorderedList>
+            }</Box>
           </Box>
 
         </ChakraProvider>
