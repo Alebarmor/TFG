@@ -2,6 +2,29 @@ import React from 'react';
 import allCards from './cards_data';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
+import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, Portal, useDisclosure  } from '@chakra-ui/react'
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+} from '@chakra-ui/react'
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from '@chakra-ui/react'
+import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
+import { BiTargetLock, BiRotateRight } from "react-icons/bi";
 
 const gameData={
   "elements":[    
@@ -264,11 +287,9 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
             <button className="square">
                {<img src={this.imag} height ="66" width="66" alt='' />}
             </button>
-          );  
+          );
       }
-
-    
-  }
+    }
   }
 
   function indexOfCardInUse() {
@@ -289,11 +310,13 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
 
   function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta: en caso afirmativo,
-    if (indexOfCardInUse() !== 999) {             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
-      cards[indexOfCardInUse()].pos = [777,777,777,777,777,777]; // Posición origen
-      cards[indexOfCardInUse()].rotation = 1;
-      cards[indexOfCardInUse()].turn = 0;
-      cards[indexOfCardInUse()].inUse = false;
+    var index = indexOfCardInUse();             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
+
+    if (index !== 999) {             
+      cards[index].pos = [777,777,777,777,777,777]; // Posición origen
+      cards[index].rotation = 1;
+      cards[index].turn = 0;
+      cards[index].inUse = false;
     }
 
     cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
@@ -303,9 +326,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function move(direction: string) {
-    if (indexOfCardInUse() !== 999)
+    var index = indexOfCardInUse();
+
+    if (index !== 999)
     {
-      var pos = cards[indexOfCardInUse()].pos;
+      var pos = cards[index].pos;
       var res = pos;
 
       var hrz = [1,1,1,1,1,1];       // Vector de movimiento horizontal
@@ -349,18 +374,20 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           break;
       }
 
-      cards[indexOfCardInUse()].pos = res;
+      cards[index].pos = res;
     }
 
     return cards
   }
 
   function rotate() {
-    if (indexOfCardInUse() !== 999)
+    var index = indexOfCardInUse();
+
+    if (index !== 999)
     {
-      var pos = cards[indexOfCardInUse()].pos;
-      var res = cards[indexOfCardInUse()].pos;
-      let rotation = cards[indexOfCardInUse()].rotation;
+      var pos = cards[index].pos;
+      var res = cards[index].pos;
+      let rotation = cards[index].rotation;
       let i;
 
       var vert2hrz = [0,11,-13,-2,-26,-15];
@@ -417,12 +444,12 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           break;
       }
 
-      cards[indexOfCardInUse()].pos = res;
+      cards[index].pos = res;
       
       if (rotation === 4) {
-        cards[indexOfCardInUse()].rotation = 1;
+        cards[index].rotation = 1;
       } else {
-        cards[indexOfCardInUse()].rotation = rotation + 1;
+        cards[index].rotation = rotation + 1;
       }
 
     }
@@ -433,10 +460,10 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function actScore() {
     var res = 0;
     for (let n = 0; n <= 155 ; n++) {
-      var cards2 = cards.filter(x=>x.pos.includes(n));
+      var cards2 = cards.filter(x => x.pos.includes(n));
         if (cards2.length > 1) {
           for (let c = 1; c <= 3 ; c++) {
-            var cards3 = cards2.filter(x=>x.trees[x.pos.indexOf(n)]===c);
+            var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(n)] === c);
             if (cards3.length === cards2.length) {
               var i = cards3.length - 1;
               if (i > 4) {
@@ -452,11 +479,13 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function colocate() {
-    if (indexOfCardInUse() !== 999)
+    var index = indexOfCardInUse();
+
+    if (index !== 999)
     {
-      cards[indexOfCardInUse()].used = true;
-      cards[indexOfCardInUse()].turn = game[0].turn;
-      cards[indexOfCardInUse()].inUse = false;
+      cards[index].used = true;
+      cards[index].turn = game[0].turn;
+      cards[index].inUse = false;
       game[0].turn += 1
     }
     
@@ -465,53 +494,93 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return cards;
   }
 
+  function BasicUsage() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    return (
+      <>
+        <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
+  
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Image alt='Rules' src='img/rules.png' w='auto' h='400px'/>
+            </ModalBody>
+  
+            <ModalFooter>
+              <Button colorScheme='blue' mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button variant='ghost'>Secondary Action</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    )
+  }
+
   class Game extends React.Component {
     render() {
       return (
         
-        <div className="game">
-          <div className='logo'>
-            <img src="img/Title.png" width="300" alt="Logo"/>
-          </div>
+        <ChakraProvider>
 
-          <div className="game-info">
-          </div>
+          <Box bg='rgb(143, 206, 60, 0.678)'>
 
-          <div className="center-container">
-            <div className="game-board">
-              <Board cards={cards}/>
-            </div>
-            
-            <div className="button-container">
-              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60" alt="Rotate"/></button>
-              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60" alt="Up"/></button>
-            </div>
+            <Container maxW='1xl' centerContent pt='25px' pb='25px'>
+              <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
+            </Container>
+                        
+            <HStack pb='5px'>
+              <Container maxW='1xl' centerContent>
+                <Box>
+                  <Board cards={cards}/>
+                </Box>
+              </Container>
 
-            <div className="button-container">
-              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60" alt="Left"/></button>
-              <button name="colocate" onClick={() => this.setState(colocate)}><img src="img/target.png" height="60" alt="Colocate"/></button>
-              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60" alt="Right"/></button>
-            </div>
+              <Container maxW='1xl' centerContent>
+                <Stack direction='column' spacing={6}>
+                  <Box display='flex' justifyContent='left'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' variant='solid' onClick={() => this.setState(rotate)}>Rotate</Button>
+                      <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' variant='solid' onClick={() => this.setState(move("up"))}>Up</Button>
+                    </ButtonGroup>
+                  </Box>
 
-            <div className="button-container">
-              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60" alt="Down"/></button>
-              <button name="rules"><img src="img/rules-vector.jpg" height="60" alt="Rules vector"/></button>
-            </div>
+                  <Box display='flex' justifyContent='center'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={FiArrowLeft}/>} size='md' colorScheme='red' variant='solid' onClick={() => this.setState(move("left"))}>Left</Button>
+                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' variant='solid' onClick={() => this.setState(colocate)}>Colocate</Button>
+                      <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' variant='solid' onClick={() => this.setState(move("right"))}>Right</Button>
+                    </ButtonGroup>
+                  </Box>
 
-          </div>
+                  <Box display='flex' justifyContent='right'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' variant='solid' onClick={() => this.setState(move("down"))}>Down</Button>
+                      <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid'>Rules</Button>
+                    </ButtonGroup>
+                  </Box>
+                </Stack>
+              </Container>
+            </HStack>
 
-          <div className="cards">{
-              <ul id='lista1'>{cards.filter(z => z.inUse === false && z.used === false).map(z => {
-                return(
-                  <div>
-                  <img src={z.img} alt="Site Logo" width={140
-                  } onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}></img>
-                  </div>
-                ) 
-              }) 
-              }</ul>
-              }</div>
-        </div>
+            <Box>{
+              <UnorderedList>
+                <HStack pt='25px' pb='25px'>
+                  {cards.filter(z => z.inUse === false && z.used === false).map(z => { return(
+                    <Container centerContent>
+                      <Image alt='Card' width='140px' src={z.img} onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}/>
+                    </Container>
+                  )})}
+                </HStack>
+              </UnorderedList>
+            }</Box>
+          </Box>
+
+        </ChakraProvider>
         
       );
     }
