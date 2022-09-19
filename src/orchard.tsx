@@ -268,7 +268,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return res;
   }
 
-  function colocate():void {
+  function colocate() {
     var index = indexOfCardInUse();
 
     if (index !== 999)
@@ -283,8 +283,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     for (let n = 0; n <= 155 ; n++) {
       game[0].score = game[0].score + calScoreId(n); 
     }
-    console.log("Score = " + game[0].score);
-    console.log(game);
+    return game;
     }
   }
  
