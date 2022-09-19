@@ -3,6 +3,7 @@ import allCards from './cards_data';
 import Board from './board';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
+
 import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
   Text, Badge, CircularProgress  } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
@@ -43,32 +44,41 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       
       cardColor !== 0?this.imag = "img/" + cardColor + "." + cardPos + ".png" : this.imag = "img/blank.ico";
 
+      var stack=calScoreId(this.props.id);
+      var dicePng="";
+      stack>=1?dicePng="img/dado-"+cardColor+"-"+stack+".png":dicePng="img/blank.ico";
+      
       switch (this.cardRot) {
         case 2:
         return (
+          
           <button className="square">
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)"}} />}
+             {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
   
         case 3:
         return (
           <button className="square">
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)"}} />}
+            {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+            {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
   
         case 4:
         return (
           <button className="square">
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)"}} />}
+            {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+            {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
       
         default:
           return (
             <button className="square">
-               {<img src={this.imag} height ="66" width="66" alt='' />}
+              {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+              {<img src={this.imag} height ="66" width="66" alt='' style={{position:'relative', zIndex:'1'}}/>}
             </button>
           );
       }
@@ -239,28 +249,26 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return cards
   }
 
-  function actScore() {
+  function calScoreId(id:number):number {
     var res = 0;
-    for (let n = 0; n <= 155 ; n++) {
-      var cards2 = cards.filter(x => x.pos.includes(n));
+      var cards2 = cards.filter(x => x.pos.includes(id));
         if (cards2.length > 1) {
           for (let c = 1; c <= 3 ; c++) {
-            var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(n)] === c);
+            var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(id)] === c);
             if (cards3.length === cards2.length) {
               var i = cards3.length - 1;
               if (i > 4) {
                 i = 4;
               }
-              res = res + game[0].scoreList[i-1];
+              res = game[0].scoreList[i-1];
             }
           }
         }
-    }
-    console.log("Score = " + res);
+    
     return res;
   }
 
-  function colocate() {
+  function colocate():void {
     var index = indexOfCardInUse();
 
     if (index !== 999)
@@ -269,11 +277,15 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       cards[index].turn = game[0].turn;
       cards[index].inUse = false;
       game[0].turn += 1
-    }
     
-    game[0].score = actScore();
+    
+    game[0].score = 0;
+    for (let n = 0; n <= 155 ; n++) {
+      game[0].score = game[0].score + calScoreId(n); 
+    }
+    console.log("Score = " + game[0].score);
     console.log(game);
-    return cards;
+    }
   }
  
   function ModalRules() {
