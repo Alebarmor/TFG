@@ -332,16 +332,16 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     <Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>
                   </HStack>
                   <HStack spacing={6}>
-                    {game[0].score>=1?<Badge variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
-                    {game[0].score>=25?<Badge variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
-                    {game[0].score>=30?<Badge variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
-                    {game[0].score>=35?<Badge variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
+                    {game[0].score>=1?<Badge className='fade-in' variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
+                    {game[0].score>=25?<Badge className='fade-in' variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
+                    {game[0].score>=30?<Badge className='fade-in' variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
+                    {game[0].score>=35?<Badge className='fade-in' variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
                   </HStack>
                   <HStack spacing={6}>
-                    {game[0].score>=40?<Badge variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
-                    {game[0].score>=45?<Badge variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
-                    {game[0].score>=50?<Badge variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
-                    {game[0].score>=55?<Badge variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
+                    {game[0].score>=40?<Badge className='fade-in' variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
+                    {game[0].score>=45?<Badge className='fade-in' variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
+                    {game[0].score>=50?<Badge className='fade-in' variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
+                    {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
                   </HStack>
                 </Stack>
                 

@@ -25,6 +25,13 @@ body {
   .status {
     margin-bottom: 10px;
   }
+
+  .fade-in { animation: fadeIn 3s; }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
   
   .square {
     background: rgba(143, 206, 60, 0.678);
