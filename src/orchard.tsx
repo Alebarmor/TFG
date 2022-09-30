@@ -1,7 +1,14 @@
 import React from 'react';
 import allCards from './cards_data';
+import Board from './board';
 //import { readJsonConfigFile } from 'typescript';
 import './index.css';
+
+import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
+  Text, Badge, CircularProgress  } from '@chakra-ui/react'
+import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
+import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
+import { BiTargetLock, BiRotateRight } from "react-icons/bi";
 
 const gameData={
   "elements":[    
@@ -13,262 +20,69 @@ const gameData={
   ]
 }
 
-class Board extends React.Component<{cards:any }, { }> {
-  renderSquare(i:number) {
-    return <Square id={i} cards={cards}/>;
-  }
-  
-    render() {
-      //const status = 'Next player: X';
-      return (
-        <div>
-          <div className="status">{}</div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-            {this.renderSquare(9)}
-            {this.renderSquare(10)}
-            {this.renderSquare(11)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(12)}
-            {this.renderSquare(13)}
-            {this.renderSquare(14)}
-            {this.renderSquare(15)}
-            {this.renderSquare(16)}
-            {this.renderSquare(17)}
-            {this.renderSquare(18)}
-            {this.renderSquare(19)}
-            {this.renderSquare(20)}
-            {this.renderSquare(21)}
-            {this.renderSquare(22)}
-            {this.renderSquare(23)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(24)}
-            {this.renderSquare(25)}
-            {this.renderSquare(26)}
-            {this.renderSquare(27)}
-            {this.renderSquare(28)}
-            {this.renderSquare(29)}
-            {this.renderSquare(30)}
-            {this.renderSquare(31)}
-            {this.renderSquare(32)}
-            {this.renderSquare(33)}
-            {this.renderSquare(34)}
-            {this.renderSquare(35)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(36)}
-            {this.renderSquare(37)}
-            {this.renderSquare(38)}
-            {this.renderSquare(39)}
-            {this.renderSquare(40)}
-            {this.renderSquare(41)}
-            {this.renderSquare(42)}
-            {this.renderSquare(43)}
-            {this.renderSquare(44)}
-            {this.renderSquare(45)}
-            {this.renderSquare(46)}
-            {this.renderSquare(47)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(48)}
-            {this.renderSquare(49)}
-            {this.renderSquare(50)}
-            {this.renderSquare(51)}
-            {this.renderSquare(52)}
-            {this.renderSquare(53)}
-            {this.renderSquare(54)}
-            {this.renderSquare(55)}
-            {this.renderSquare(56)}
-            {this.renderSquare(57)}
-            {this.renderSquare(58)}
-            {this.renderSquare(59)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(60)}
-            {this.renderSquare(61)}
-            {this.renderSquare(62)}
-            {this.renderSquare(63)}
-            {this.renderSquare(64)}
-            {this.renderSquare(65)}
-            {this.renderSquare(66)}
-            {this.renderSquare(67)}
-            {this.renderSquare(68)}
-            {this.renderSquare(69)}
-            {this.renderSquare(70)}
-            {this.renderSquare(71)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(72)}
-            {this.renderSquare(73)}
-            {this.renderSquare(74)}
-            {this.renderSquare(75)}
-            {this.renderSquare(76)}
-            {this.renderSquare(77)}
-            {this.renderSquare(78)}
-            {this.renderSquare(79)}
-            {this.renderSquare(80)}
-            {this.renderSquare(81)}
-            {this.renderSquare(82)}
-            {this.renderSquare(83)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(84)}
-            {this.renderSquare(85)}
-            {this.renderSquare(86)}
-            {this.renderSquare(87)}
-            {this.renderSquare(88)}
-            {this.renderSquare(89)}
-            {this.renderSquare(90)}
-            {this.renderSquare(91)}
-            {this.renderSquare(92)}
-            {this.renderSquare(93)}
-            {this.renderSquare(94)}
-            {this.renderSquare(95)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(96)}
-            {this.renderSquare(97)}
-            {this.renderSquare(98)}
-            {this.renderSquare(99)}
-            {this.renderSquare(100)}
-            {this.renderSquare(101)}
-            {this.renderSquare(102)}
-            {this.renderSquare(103)}
-            {this.renderSquare(104)}
-            {this.renderSquare(105)}
-            {this.renderSquare(106)}
-            {this.renderSquare(107)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(108)}
-            {this.renderSquare(109)}
-            {this.renderSquare(110)}
-            {this.renderSquare(111)}
-            {this.renderSquare(112)}
-            {this.renderSquare(113)}
-            {this.renderSquare(114)}
-            {this.renderSquare(115)}
-            {this.renderSquare(116)}
-            {this.renderSquare(117)}
-            {this.renderSquare(118)}
-            {this.renderSquare(119)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(120)}
-            {this.renderSquare(121)}
-            {this.renderSquare(122)}
-            {this.renderSquare(123)}
-            {this.renderSquare(124)}
-            {this.renderSquare(125)}
-            {this.renderSquare(126)}
-            {this.renderSquare(127)}
-            {this.renderSquare(128)}
-            {this.renderSquare(129)}
-            {this.renderSquare(130)}
-            {this.renderSquare(131)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(132)}
-            {this.renderSquare(133)}
-            {this.renderSquare(134)}
-            {this.renderSquare(135)}
-            {this.renderSquare(136)}
-            {this.renderSquare(137)}
-            {this.renderSquare(138)}
-            {this.renderSquare(139)}
-            {this.renderSquare(140)}
-            {this.renderSquare(141)}
-            {this.renderSquare(142)}
-            {this.renderSquare(143)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(144)}
-            {this.renderSquare(145)}
-            {this.renderSquare(146)}
-            {this.renderSquare(147)}
-            {this.renderSquare(148)}
-            {this.renderSquare(149)}
-            {this.renderSquare(150)}
-            {this.renderSquare(151)}
-            {this.renderSquare(152)}
-            {this.renderSquare(153)}
-            {this.renderSquare(154)}
-            {this.renderSquare(155)}
-          </div>
-          
-        </div>
-      );
-    }
-  }
-
-
-
 var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 lista = lista.sort(function() {return Math.random() - 0.5});
 
 let miarray = lista.slice(0,9);
-var cards=allCards.elements.filter(z=>miarray.includes(z.id));
+var cards = allCards.elements.filter(z=>miarray.includes(z.id));
 var game = gameData.elements
 
 class Square extends React.Component<{id:number, cards:any}, { }> {
-   imag: string="";
-   cardRot: number=0;
+   imag: string = "";
+   cardRot: number = 0;
 
     render() {
-      var cardsIn=cards.filter(x=>x.pos.includes(this.props.id)).sort((x,b)=>{return b.turn-x.turn});
-      var alloCard=cardsIn[0];
-      var cardPos=0;
-      var cardColor=0;
-      if(alloCard!==undefined){
-        cardPos=alloCard.pos.indexOf(this.props.id)
-        cardColor=alloCard.trees[cardPos];
-        this.cardRot=alloCard.rotation;
+      var cardsIn = cards.filter(x => x.pos.includes(this.props.id)).sort((x,b) => {return b.turn-x.turn});
+      var alloCard = cardsIn[0];
+      var cardPos = 0;
+      var cardColor = 0;
+      if (alloCard !== undefined) {
+        cardPos = alloCard.pos.indexOf(this.props.id)
+        cardColor = alloCard.trees[cardPos];
+        this.cardRot = alloCard.rotation;
       }
       
-      cardColor!==0?this.imag="img/"+cardColor+"."+cardPos+".png":this.imag="img/blank.ico"
+      cardColor !== 0?this.imag = "img/" + cardColor + "." + cardPos + ".png" : this.imag = "img/blank.ico";
 
+      var stack=calScoreId(this.props.id);
+      var dicePng="";
+      stack>=1?dicePng="img/dado-"+cardColor+"-"+stack+".png":dicePng="img/blank.ico";
+      
       switch (this.cardRot) {
         case 2:
         return (
+          
           <button className="square">
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)"}} />}
+             {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
   
         case 3:
         return (
           <button className="square">
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)"}} />}
+            {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+            {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
   
         case 4:
         return (
           <button className="square">
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)"}} />}
+            {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+            {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
       
         default:
           return (
             <button className="square">
-               {<img src={this.imag} height ="66" width="66" alt='' />}
+              {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
+              {<img src={this.imag} height ="66" width="66" alt='' style={{position:'relative', zIndex:'1'}}/>}
             </button>
-          );  
+          );
       }
-
-    
-  }
+    }
   }
 
   function indexOfCardInUse() {
@@ -287,13 +101,14 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return index
   }
 
-
   function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta: en caso afirmativo,
-    if (indexOfCardInUse() !== 999) {             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
-      cards[indexOfCardInUse()].pos = [777,777,777,777,777,777]; // Posición origen
-      cards[indexOfCardInUse()].rotation = 1;
-      cards[indexOfCardInUse()].turn = 0;
-      cards[indexOfCardInUse()].inUse = false;
+    var index = indexOfCardInUse();             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
+
+    if (index !== 999) {             
+      cards[index].pos = [777,777,777,777,777,777]; // Posición origen
+      cards[index].rotation = 1;
+      cards[index].turn = 0;
+      cards[index].inUse = false;
     }
 
     cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
@@ -303,9 +118,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function move(direction: string) {
-    if (indexOfCardInUse() !== 999)
+    var index = indexOfCardInUse();
+
+    if (index !== 999)
     {
-      var pos = cards[indexOfCardInUse()].pos;
+      var pos = cards[index].pos;
       var res = pos;
 
       var hrz = [1,1,1,1,1,1];       // Vector de movimiento horizontal
@@ -349,18 +166,20 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           break;
       }
 
-      cards[indexOfCardInUse()].pos = res;
+      cards[index].pos = res;
     }
 
     return cards
   }
 
   function rotate() {
-    if (indexOfCardInUse() !== 999)
+    var index = indexOfCardInUse();
+
+    if (index !== 999)
     {
-      var pos = cards[indexOfCardInUse()].pos;
-      var res = cards[indexOfCardInUse()].pos;
-      let rotation = cards[indexOfCardInUse()].rotation;
+      var pos = cards[index].pos;
+      var res = cards[index].pos;
+      let rotation = cards[index].rotation;
       let i;
 
       var vert2hrz = [0,11,-13,-2,-26,-15];
@@ -417,12 +236,12 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           break;
       }
 
-      cards[indexOfCardInUse()].pos = res;
+      cards[index].pos = res;
       
       if (rotation === 4) {
-        cards[indexOfCardInUse()].rotation = 1;
+        cards[index].rotation = 1;
       } else {
-        cards[indexOfCardInUse()].rotation = rotation + 1;
+        cards[index].rotation = rotation + 1;
       }
 
     }
@@ -430,88 +249,142 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return cards
   }
 
-  function actScore() {
+  function calScoreId(id:number):number {
     var res = 0;
-    for (let n = 0; n <= 155 ; n++) {
-      var cards2 = cards.filter(x=>x.pos.includes(n));
+      var cards2 = cards.filter(x => x.pos.includes(id));
         if (cards2.length > 1) {
           for (let c = 1; c <= 3 ; c++) {
-            var cards3 = cards2.filter(x=>x.trees[x.pos.indexOf(n)]===c);
+            var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(id)] === c);
             if (cards3.length === cards2.length) {
               var i = cards3.length - 1;
               if (i > 4) {
                 i = 4;
               }
-              res = res + game[0].scoreList[i-1];
+              res = game[0].scoreList[i-1];
             }
           }
         }
-    }
-    console.log("Score = " + res);
+    
     return res;
   }
 
   function colocate() {
-    if (indexOfCardInUse() !== 999)
+    var index = indexOfCardInUse();
+
+    if (index !== 999)
     {
-      cards[indexOfCardInUse()].used = true;
-      cards[indexOfCardInUse()].turn = game[0].turn;
-      cards[indexOfCardInUse()].inUse = false;
+      cards[index].used = true;
+      cards[index].turn = game[0].turn;
+      cards[index].inUse = false;
       game[0].turn += 1
-    }
     
-    game[0].score = actScore();
-    console.log(game);
-    return cards;
+    
+    game[0].score = 0;
+    for (let n = 0; n <= 155 ; n++) {
+      game[0].score = game[0].score + calScoreId(n); 
+    }
+    return game;
+    }
+  }
+ 
+  function ModalRules() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    return (
+      <>
+        <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
+  
+        <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalCloseButton />
+            <ModalBody>
+              <Image alt='Rules' src='img/rules.png'/>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </>
+    )
   }
 
   class Game extends React.Component {
     render() {
       return (
         
-        <div className="game">
-          <div className='logo'>
-            <img src="img/Title.png" width="300" alt="Logo"/>
-          </div>
+        <ChakraProvider>
 
-          <div className="game-info">
-          </div>
+          <Box bg='rgb(143, 206, 60, 0.678)'>
 
-          <div className="center-container">
-            <div className="game-board">
-              <Board cards={cards}/>
-            </div>
-            
-            <div className="button-container">
-              <button name="rotate" onClick={() => this.setState(rotate)}><img src="img/rotate.png" height="60" alt="Rotate"/></button>
-              <button name="up" onClick={() => this.setState(move("up"))}><img src="img/up.png" height="60" alt="Up"/></button>
-            </div>
+            <Container maxW='1xl' centerContent pt='25px' pb='25px'>
+              <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
+            </Container>
+                        
+            <HStack pb='5px'>
+              <Container maxW='1xl' centerContent>
+                <Box>
+                  <Board cards={cards}/>
+                </Box>
+              </Container>
 
-            <div className="button-container">
-              <button name="left" onClick={() => this.setState(move("left"))}><img src="img/left.png" height="60" alt="Left"/></button>
-              <button name="colocate" onClick={() => this.setState(colocate)}><img src="img/target.png" height="60" alt="Colocate"/></button>
-              <button name="right" onClick={() => this.setState(move("right"))}><img src="img/right.png" height="60" alt="Right"/></button>
-            </div>
+              <Container maxW='1xl' centerContent>
+                <Stack pb='150px'>
+                  <HStack spacing='20'>
+                    <CircularProgress value={game[0].score/55*100} size='120px' />
+                    <Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>
+                  </HStack>
+                  <HStack spacing={6}>
+                    {game[0].score>=1?<Badge className='fade-in' variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
+                    {game[0].score>=25?<Badge className='fade-in' variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
+                    {game[0].score>=30?<Badge className='fade-in' variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
+                    {game[0].score>=35?<Badge className='fade-in' variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
+                  </HStack>
+                  <HStack spacing={6}>
+                    {game[0].score>=40?<Badge className='fade-in' variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
+                    {game[0].score>=45?<Badge className='fade-in' variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
+                    {game[0].score>=50?<Badge className='fade-in' variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
+                    {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
+                  </HStack>
+                </Stack>
+                
+                <Stack direction='column' spacing={6}>
+                  <Box display='flex' justifyContent='left'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
+                      <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
+                    </ButtonGroup>
+                  </Box>
 
-            <div className="button-container">
-              <button name="down" onClick={() => this.setState(move("down"))}><img src="img/down.png" height="60" alt="Down"/></button>
-              <button name="rules"><img src="img/rules-vector.jpg" height="60" alt="Rules vector"/></button>
-            </div>
+                  <Box display='flex' justifyContent='center'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
+                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(colocate)}>Colocate</Button>
+                      <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
+                    </ButtonGroup>
+                  </Box>
 
-          </div>
+                  <Box display='flex' justifyContent='right'>
+                    <ButtonGroup gap='2'>
+                      <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
+                      <ModalRules />
+                    </ButtonGroup>
+                  </Box>
+                </Stack>
+              </Container>
+            </HStack>
 
-          <div className="cards">{
-              <ul id='lista1'>{cards.filter(z => z.inUse === false && z.used === false).map(z => {
-                return(
-                  <div>
-                  <img src={z.img} alt="Site Logo" width={140
-                  } onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))}></img>
-                  </div>
-                ) 
-              }) 
-              }</ul>
-              }</div>
-        </div>
+            <Box>{
+              <UnorderedList>
+                <HStack pt='25px' pb='25px'>
+                  {cards.filter(z => z.inUse === false && z.used === false).map(z => { return(
+                    <Container centerContent>
+                      <Image className='grow' alt='Card' width='140px' src={z.img} onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))} boxShadow='dark-lg'/>
+                    </Container>
+                  )})}
+                </HStack>
+              </UnorderedList>
+            }</Box>
+          </Box>
+
+        </ChakraProvider>
         
       );
     }
@@ -519,3 +392,4 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   
   // ========================================
   export default Game;
+  export {Square, cards};

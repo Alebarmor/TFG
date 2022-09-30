@@ -7,6 +7,14 @@ body {
   ol, ul {
     padding-left: 30px;
   }
+
+  .grow { 
+    transition: all .2s ease-in-out; 
+    }
+    
+  .grow:hover { 
+    transform: scale(1.1); 
+    }
   
   .board-row:after {
     clear: both;
@@ -16,6 +24,13 @@ body {
   
   .status {
     margin-bottom: 10px;
+  }
+
+  .fade-in { animation: fadeIn 3s; }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
   
   .square {
@@ -32,10 +47,6 @@ body {
     text-align: center;
     width: 68px;
   }
-
-  .center-container {
-    display: flex;
-  }
   
   .square:focus {
     outline: none;
@@ -43,40 +54,4 @@ body {
   
   .kbd-navigation .square:focus {
     background: #ddd;
-  }
-  
-  .game-info {
-    float: left;
-    margin-right: 10%;
-    font-size: large;
-    font-family: sans-serif
-
-  }
-
-  .game-board {
-    margin-top: 1% ;
-    margin-left: 10% ;
-    margin-bottom: 2% ;
-    float: left;
-  }
-
-  .button-container {
-    float: bottom;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-  
-  #lista1  ul{
-    list-style-type: none;
-  }
-
-  #lista1  img{
-    float: left;
-    padding: 1.2%;
-  }
-
-  .logo{
-    text-align: center;
   }
