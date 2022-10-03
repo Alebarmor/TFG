@@ -15,7 +15,8 @@ const gameData={
   {
       "score":0,
       "turn":1,
-      "scoreList": [1, 3, 6, 10]
+      "scoreList": [1, 3, 6, 10],
+      "rottenFruits":0,
   }
   ]
 }
@@ -47,6 +48,9 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       var stack=calScoreId(this.props.id);
       var dicePng="";
       stack>=1?dicePng="img/dado-"+cardColor+"-"+stack+".png":dicePng="img/blank.ico";
+
+      //rotten
+      if(calScoreId(this.props.id)===0&&cardsIn.length>=2){dicePng="img/rotten.png"}
       
       switch (this.cardRot) {
         case 2:
@@ -268,15 +272,34 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return res;
   }
 
+  function gethits(id:number):[number[],number[]]{
+   var hits = [];
+   var card = cards[id];
+   for (let index = 0; index <= 5; index++) {
+    if(cards.filter(x=>x.pos.includes(card.pos[index])).length>=2){
+      hits.push(card.pos[index]);
+    }
+   }
+   var bhits=[];
+      for (let index = 0; index < hits.length; index++) {
+        if(calScoreId(hits[index])===0) {bhits.push(hits[index])}
+      }
+   return [hits,bhits];
+  }
+
   function colocate() {
     var index = indexOfCardInUse();
-
     if (index !== 999)
     {
+      var hs=gethits(index);
+      if(hs[0].length===0 && game[0].turn!==1){return game;}
+      if(hs[1].length>2 || game[0].rottenFruits+hs[1].length>2){return game;}
+      
+      game[0].rottenFruits += hs[1].length;
       cards[index].used = true;
       cards[index].turn = game[0].turn;
       cards[index].inUse = false;
-      game[0].turn += 1
+      game[0].turn += 1;
     
     
     game[0].score = 0;
