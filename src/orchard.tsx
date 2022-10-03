@@ -15,7 +15,8 @@ const gameData={
   {
       "score":0,
       "turn":1,
-      "scoreList": [1, 3, 6, 10]
+      "scoreList": [1, 3, 6, 10],
+      "rottenList": [0]
   }
   ]
 }
@@ -42,11 +43,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         this.cardRot = alloCard.rotation;
       }
       
-      cardColor !== 0?this.imag = "img/" + cardColor + "." + cardPos + ".png" : this.imag = "img/blank.ico";
+      cardColor !== 0? this.imag = "img/" + cardColor + "." + cardPos + ".png" : this.imag = "img/blank.ico";
 
-      var stack=calScoreId(this.props.id);
-      var dicePng="";
-      stack>=1?dicePng="img/dado-"+cardColor+"-"+stack+".png":dicePng="img/blank.ico";
+      var stack = calScoreId(this.props.id);
+      var dicePng = "";
+      stack >=1? dicePng = "img/dado-" + cardColor + "-" + stack + ".png" : dicePng = "img/blank.ico";
       
       switch (this.cardRot) {
         case 2:
@@ -252,37 +253,59 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function calScoreId(id:number):number {
     var res = 0;
       var cards2 = cards.filter(x => x.pos.includes(id));
-        if (cards2.length > 1) {
-          for (let c = 1; c <= 3 ; c++) {
-            var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(id)] === c);
-            if (cards3.length === cards2.length) {
-              var i = cards3.length - 1;
-              if (i > 4) {
-                i = 4;
-              }
-              res = game[0].scoreList[i-1];
+      if (cards2.length > 1) {
+        for (let c = 1; c <= 3 ; c++) {
+          var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(id)] === c);
+          if (cards3.length === cards2.length) {
+            var i = cards3.length - 1;
+            if (i > 4) {
+              i = 4;
             }
+            res = game[0].scoreList[i-1];
           }
         }
-    
+      }
     return res;
+  }
+
+  function rotten(id:number) {
+    var cards2 = cards.filter(x => x.pos.includes(id));
+    var listaColores = [];
+    let l = cards2.length;
+    var b = true;
+    if (cards2.length >= 2) {
+      for (let i = 0; i < l; i++) {
+        var card = cards2[i];
+        let index = card.pos.indexOf(id);
+        listaColores.push(card.trees[index]);
+      }
+      for (let i = 1; i < l; i++) {
+        b = b === (listaColores[i-1] === listaColores[i]);
+      }
+      if (b === false) {
+        game[0].rottenList.push(id);
+      }
+    }
   }
 
   function colocate() {
     var index = indexOfCardInUse();
 
-    if (index !== 999)
-    {
+    if (index !== 999) {
       cards[index].used = true;
       cards[index].turn = game[0].turn;
       cards[index].inUse = false;
       game[0].turn += 1
-    
-    
-    game[0].score = 0;
+      game[0].score = 0;
+
     for (let n = 0; n <= 155 ; n++) {
-      game[0].score = game[0].score + calScoreId(n); 
+      game[0].score = game[0].score + calScoreId(n);
+      if (!game[0].rottenList.includes(n)) {
+        rotten(n);
+      }
     }
+
+    console.log(game[0].rottenList);
     return game;
     }
   }
@@ -292,7 +315,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     return (
       <>
         <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
-  
         <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
           <ModalOverlay />
           <ModalContent>
