@@ -21,44 +21,46 @@ const gameData={
   ]
 }
 
-var lista = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
-lista = lista.sort(function() {return Math.random() - 0.5});
+var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
 
-let miarray = lista.slice(0,9);
-var cards = allCards.elements.filter(z=>miarray.includes(z.id));
+let barajaAleatoria = listaNumeros.slice(0,9);
+var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
 var game = gameData.elements
 
 class Square extends React.Component<{id:number, cards:any}, { }> {
-   imag: string = "";
-   cardRot: number = 0;
+  img: string = "";
+  rotation: number = 0;
 
     render() {
-      var cardsIn = cards.filter(x => x.pos.includes(this.props.id)).sort((x,b) => {return b.turn-x.turn});
-      var alloCard = cardsIn[0];
+      var cardsInPositionOrdered = cards.filter(x => x.pos.includes(this.props.id)).sort((x,b) => {return b.turn-x.turn});
+      var upperCard = cardsInPositionOrdered[0];
       var cardPos = 0;
       var cardColor = 0;
-      if (alloCard !== undefined) {
-        cardPos = alloCard.pos.indexOf(this.props.id)
-        cardColor = alloCard.trees[cardPos];
-        this.cardRot = alloCard.rotation;
+      if (upperCard !== undefined) {
+        cardPos = upperCard.pos.indexOf(this.props.id)
+        cardColor = upperCard.trees[cardPos];
+        this.rotation = upperCard.rotation;
       }
       
-      cardColor !== 0?this.imag = "img/" + cardColor + "." + cardPos + ".png" : this.imag = "img/blank.ico";
+      cardColor !== 0? this.img = "img/" + cardColor + "." + cardPos + ".png" : this.img = "img/blank.ico";
 
-      var stack=calScoreId(this.props.id);
-      var dicePng="";
-      stack>=1?dicePng="img/dado-"+cardColor+"-"+stack+".png":dicePng="img/blank.ico";
+      var stack = calScoreId(this.props.id);
+      var dicePng = "";
+      stack >=1? dicePng = "img/dado-" + cardColor + "-" + stack + ".png" : dicePng = "img/blank.ico";
 
       //rotten
-      if(calScoreId(this.props.id)===0&&cardsIn.length>=2){dicePng="img/rotten.png"}
+      if (calScoreId(this.props.id) === 0 && cardsInPositionOrdered.length >= 2) {
+        dicePng = "img/rotten.png";
+      }
       
-      switch (this.cardRot) {
+      switch (this.rotation) {
         case 2:
         return (
           
           <button className="square">
              {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-             {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(90deg)", position:'relative', zIndex:'1' }} />}
+             {<img src={this.img} height ="66" width="66" alt='' style={{transform: "rotate(90deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
   
@@ -66,7 +68,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         return (
           <button className="square">
             {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-            {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(180deg)", position:'relative', zIndex:'1' }} />}
+            {<img src={this.img} height ="66" width="66" alt='' style={{transform: "rotate(180deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
   
@@ -74,7 +76,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         return (
           <button className="square">
             {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-            {<img src={this.imag} height ="66" width="66" alt='' style={{transform: "rotate(270deg)", position:'relative', zIndex:'1' }} />}
+            {<img src={this.img} height ="66" width="66" alt='' style={{transform: "rotate(270deg)", position:'relative', zIndex:'1' }} />}
           </button>
         );  
       
@@ -82,7 +84,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           return (
             <button className="square">
               {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-              {<img src={this.imag} height ="66" width="66" alt='' style={{position:'relative', zIndex:'1'}}/>}
+              {<img src={this.img} height ="66" width="66" alt='' style={{position:'relative', zIndex:'1'}}/>}
             </button>
           );
       }
@@ -289,23 +291,28 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
   function colocate() {
     var index = indexOfCardInUse();
-    if (index !== 999)
-    {
-      var hs=gethits(index);
-      if(hs[0].length===0 && game[0].turn!==1){return game;}
-      if(hs[1].length>2 || game[0].rottenFruits+hs[1].length>2){return game;}
+
+    if (index !== 999) {
+      var hs = gethits(index);
+
+      if (hs[0].length === 0 && game[0].turn !== 1) {
+        return game;
+      }
+      if (hs[1].length > 2 || (game[0].rottenFruits + hs[1].length) > 2) {
+        return game;
+      }
       
       game[0].rottenFruits += hs[1].length;
       cards[index].used = true;
       cards[index].turn = game[0].turn;
       cards[index].inUse = false;
       game[0].turn += 1;
-    
-    
-    game[0].score = 0;
-    for (let n = 0; n <= 155 ; n++) {
-      game[0].score = game[0].score + calScoreId(n); 
-    }
+      game[0].score = 0;
+
+      for (let n = 0; n <= 155 ; n++) {
+        game[0].score = game[0].score + calScoreId(n); 
+      }
+
     return game;
     }
   }
