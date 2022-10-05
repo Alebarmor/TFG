@@ -9,6 +9,12 @@ import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Contain
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight } from "react-icons/bi";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from '@chakra-ui/react'
 
 const gameData={
   "elements":[    
@@ -23,6 +29,7 @@ const gameData={
 
 var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
+var errorPlace = false;
 
 let barajaAleatoria = listaNumeros.slice(0,9);
 var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
@@ -289,16 +296,18 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
    return [hits,bhits];
   }
 
-  function colocate() {
+  function place() {
     var index = indexOfCardInUse();
 
     if (index !== 999) {
       var hs = gethits(index);
 
       if (hs[0].length === 0 && game[0].turn !== 1) {
+        errorPlace = true;
         return game;
       }
       if (hs[1].length > 2 || (game[0].rottenFruits + hs[1].length) > 2) {
+        errorPlace = true;
         return game;
       }
       
@@ -313,7 +322,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         game[0].score = game[0].score + calScoreId(n); 
       }
 
-    return game;
+      errorPlace = false;
+      return game;
     }
   }
  
@@ -374,8 +384,15 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
                   </HStack>
                 </Stack>
+
+                {errorPlace?
+                <Alert className='fade-in-short' status='error' width='auto'>
+                  <AlertIcon />
+                  <AlertTitle>You can't place the card there!</AlertTitle>
+                  <AlertDescription>Try it again in other place.</AlertDescription>
+                </Alert>:<></>}
                 
-                <Stack direction='column' spacing={6}>
+                <Stack direction='column' spacing={6} pt='25px'>
                   <Box display='flex' justifyContent='left'>
                     <ButtonGroup gap='2'>
                       <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
@@ -386,7 +403,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   <Box display='flex' justifyContent='center'>
                     <ButtonGroup gap='2'>
                       <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
-                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(colocate)}>Colocate</Button>
+                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
                       <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
                     </ButtonGroup>
                   </Box>

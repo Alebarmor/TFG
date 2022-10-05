@@ -10,11 +10,11 @@ body {
 
   .grow { 
     transition: all .2s ease-in-out; 
-    }
+  }
     
   .grow:hover { 
     transform: scale(1.1); 
-    }
+  }
   
   .board-row:after {
     clear: both;
@@ -26,7 +26,13 @@ body {
     margin-bottom: 10px;
   }
 
-  .fade-in { animation: fadeIn 3s; }
+  .fade-in {
+    animation: fadeIn 3s;
+  }
+
+  .fade-in-short {
+    animation: fadeIn 0.5s;
+  }
 
   @keyframes fadeIn {
     0% { opacity: 0; }
