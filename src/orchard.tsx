@@ -1,7 +1,6 @@
 import React from 'react';
 import allCards from './cards_data';
 import Board from './board';
-//import { readJsonConfigFile } from 'typescript';
 import './index.css';
 
 import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
@@ -23,13 +22,13 @@ const gameData={
       "turn":1,
       "scoreList": [1, 3, 6, 10],
       "rottenFruits":0,
+      "errorMsg": [""]
   }
   ]
 }
 
 var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
-var errorPlace = false;
 
 let barajaAleatoria = listaNumeros.slice(0,9);
 var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
@@ -132,7 +131,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
   function move(direction: string) {
     var index = indexOfCardInUse();
-
+    game[0].errorMsg = [];
     if (index !== 999)
     {
       var pos = cards[index].pos;
@@ -187,6 +186,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
   function rotate() {
     var index = indexOfCardInUse();
+    game[0].errorMsg = [];
 
     if (index !== 999)
     {
@@ -303,11 +303,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       var hs = gethits(index);
 
       if (hs[0].length === 0 && game[0].turn !== 1) {
-        errorPlace = true;
+        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
         return game;
       }
       if (hs[1].length > 2 || (game[0].rottenFruits + hs[1].length) > 2) {
-        errorPlace = true;
+        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
         return game;
       }
       
@@ -322,7 +322,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         game[0].score = game[0].score + calScoreId(n); 
       }
 
-      errorPlace = false;
+      game[0].errorMsg = [];
       return game;
     }
   }
@@ -385,11 +385,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   </HStack>
                 </Stack>
 
-                {errorPlace?
+                {game[0].errorMsg.length===2?
                 <Alert className='fade-in-short' status='error' width='auto'>
                   <AlertIcon />
-                  <AlertTitle>You can't place the card there!</AlertTitle>
-                  <AlertDescription>Try it again in other place.</AlertDescription>
+                  <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                  <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
                 </Alert>:<></>}
                 
                 <Stack direction='column' spacing={6} pt='25px'>
