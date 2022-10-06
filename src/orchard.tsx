@@ -4,7 +4,7 @@ import Board from './board';
 import './index.css';
 
 import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress  } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, useToast  } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight } from "react-icons/bi";
@@ -33,6 +33,8 @@ listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
 let barajaAleatoria = listaNumeros.slice(0,9);
 var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
 var game = gameData.elements
+let errorText = "This is not a valid place.";
+let isErrorText = false;
 
 class Square extends React.Component<{id:number, cards:any}, { }> {
   img: string = "";
@@ -303,11 +305,13 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       var hs = gethits(index);
 
       if (hs[0].length === 0 && game[0].turn !== 1) {
-        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
+        errorText = "There is no tree to overlap there.";
+        isErrorText = true;
         return game;
       }
       if (hs[1].length > 2 || (game[0].rottenFruits + hs[1].length) > 2) {
-        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
+        errorText = "Too much rotten fruits!";
+        isErrorText = true;
         return game;
       }
       
@@ -322,7 +326,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         game[0].score = game[0].score + calScoreId(n); 
       }
 
-      game[0].errorMsg = [];
+      isErrorText = false;
       return game;
     }
   }
@@ -343,6 +347,29 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           </ModalContent>
         </Modal>
       </>
+    )
+  }
+
+  function ToastExample() {
+    const toast = useToast()
+    return (
+      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' 
+        onClick={() => { 
+          place();
+          if (isErrorText) {
+            toast({
+              title: "You can't place the card there.",
+              description: errorText,
+              status: 'warning',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        }
+      }
+      >
+        Place
+      </Button>
     )
   }
 
@@ -403,7 +430,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   <Box display='flex' justifyContent='center'>
                     <ButtonGroup gap='2'>
                       <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
-                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
+                      <ToastExample />
                       <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
                     </ButtonGroup>
                   </Box>
