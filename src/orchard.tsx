@@ -33,8 +33,6 @@ listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
 let barajaAleatoria = listaNumeros.slice(0,9);
 var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
 var game = gameData.elements
-let errorText = "This is not a valid place.";
-let isErrorText = false;
 
 class Square extends React.Component<{id:number, cards:any}, { }> {
   img: string = "";
@@ -300,18 +298,17 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
   function place() {
     var index = indexOfCardInUse();
+    console.log(game[0].errorMsg)
 
     if (index !== 999) {
       var hs = gethits(index);
 
       if (hs[0].length === 0 && game[0].turn !== 1) {
-        errorText = "There is no tree to overlap there.";
-        isErrorText = true;
+        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
         return game;
       }
       if (hs[1].length > 2 || (game[0].rottenFruits + hs[1].length) > 2) {
-        errorText = "Too much rotten fruits!";
-        isErrorText = true;
+        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
         return game;
       }
       
@@ -325,8 +322,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       for (let n = 0; n <= 155 ; n++) {
         game[0].score = game[0].score + calScoreId(n); 
       }
-
-      isErrorText = false;
+      game[0].errorMsg = [];
       return game;
     }
   }
@@ -356,10 +352,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' 
         onClick={() => { 
           place();
-          if (isErrorText) {
+          var errorMsg = game[0].errorMsg;
+          if (errorMsg.length===2) {
             toast({
-              title: "You can't place the card there.",
-              description: errorText,
+              title: errorMsg[0],
+              description: errorMsg[1],
               status: 'warning',
               duration: 5000,
               isClosable: true,
@@ -430,6 +427,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   <Box display='flex' justifyContent='center'>
                     <ButtonGroup gap='2'>
                       <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
+                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
                       <ToastExample />
                       <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
                     </ButtonGroup>
@@ -463,7 +461,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       );
     }
   }
-  
   // ========================================
   export default Game;
   export {Square, cards};
