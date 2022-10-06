@@ -322,6 +322,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       for (let n = 0; n <= 155 ; n++) {
         game[0].score = game[0].score + calScoreId(n); 
       }
+      game[0].score = game[0].score - (3*game[0].rottenFruits); 
       game[0].errorMsg = [];
       return game;
     }
