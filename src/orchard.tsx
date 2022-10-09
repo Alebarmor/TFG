@@ -4,7 +4,7 @@ import Board from './board';
 import './index.css';
 
 import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, useToast  } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, useToast, extendTheme} from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight } from "react-icons/bi";
@@ -15,11 +15,23 @@ import {
   AlertDescription,
 } from '@chakra-ui/react'
 
+const customTheme = extendTheme(
+  {
+    styles: {
+      global: {
+        body: {
+          bg: 'rgb(143, 206, 60, 0.678)',
+        }
+      }
+    }
+  }
+)
+
 const gameData={
   "elements":[    
   {
       "score":0,
-      "turn":1,
+      "turn":0,
       "scoreList": [1, 3, 6, 10],
       "rottenFruits":0,
       "errorMsg": [""]
@@ -371,27 +383,41 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     )
   }
 
+  function start(){
+    game[0].turn=1;
+    return game;
+  }
+  function surrender(){
+    game[0].turn=10;
+    return game;
+  }
   class Game extends React.Component {
     render() {
-      return (
-        
-        <ChakraProvider>
-
-          <Box bg='rgb(143, 206, 60, 0.678)'>
-
-            <Container maxW='1xl' centerContent pt='25px' pb='25px'>
-              <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
-            </Container>
-                        
-            <HStack pb='5px'>
-              <Container maxW='1xl' centerContent>
-                <Box>
-                  <Board cards={cards}/>
-                </Box>
+      switch(game[0].turn){
+      //Aqui las cosas para el inicio
+      case 0:
+        return(
+          <ChakraProvider theme={customTheme}> 
+            <Box >
+              <Container maxW='1xl' centerContent pt='25px' pb='25px'>
+                <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
               </Container>
-
-              <Container maxW='1xl' centerContent>
-                <Stack pb='150px'>
+              <Box display='flex' justifyContent='center'>
+              <Button size='lg' colorScheme='purple' onClick={() => this.setState(start)}>Start</Button>
+              </Box>
+            </Box>
+          </ChakraProvider>
+        )
+        //Aqui las cosas para el final
+      case 10:
+        return(
+          <ChakraProvider theme={customTheme}> 
+            <Box >
+              <Container maxW='1xl' centerContent pt='25px' pb='25px'>
+                <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
+              </Container>
+              <Box display='flex' justifyContent='center'>
+               <Stack pb='150px'>
                   <HStack spacing='20'>
                     <CircularProgress value={game[0].score/55*100} size='120px' />
                     <Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>
@@ -409,57 +435,99 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
                   </HStack>
                 </Stack>
+              </Box>
+            </Box>
+          </ChakraProvider>
+        )
 
-                {game[0].errorMsg.length===2?
-                <Alert className='fade-in-short' status='error' width='auto'>
-                  <AlertIcon />
-                  <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
-                  <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
-                </Alert>:<></>}
-                
-                <Stack direction='column' spacing={6} pt='25px'>
-                  <Box display='flex' justifyContent='left'>
-                    <ButtonGroup gap='2'>
-                      <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
-                      <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
-                    </ButtonGroup>
-                  </Box>
+      //aqui va lo demas he mal metido el boton de surrender y el color de fondo es distinto
+      default:  
+        return (
+          <ChakraProvider theme={customTheme}>
 
-                  <Box display='flex' justifyContent='center'>
-                    <ButtonGroup gap='2'>
-                      <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
-                      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
-                      <ToastExample />
-                      <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
-                    </ButtonGroup>
-                  </Box>
+            <Box>
 
-                  <Box display='flex' justifyContent='right'>
-                    <ButtonGroup gap='2'>
-                      <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
-                      <ModalRules />
-                    </ButtonGroup>
-                  </Box>
-                </Stack>
+              <Container maxW='1xl' centerContent pt='25px' pb='25px'>
+                <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
               </Container>
-            </HStack>
+                          
+              <HStack pb='5px'>
+                <Container maxW='1xl' centerContent>
+                  <Box>
+                    <Board cards={cards}/>
+                  </Box>
+                </Container>
 
-            <Box>{
-              <UnorderedList>
-                <HStack pt='25px' pb='25px'>
-                  {cards.filter(z => z.inUse === false && z.used === false).map(z => { return(
-                    <Container centerContent>
-                      <Image className='grow' alt='Card' width='140px' src={z.img} onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))} boxShadow='dark-lg'/>
-                    </Container>
-                  )})}
-                </HStack>
-              </UnorderedList>
-            }</Box>
-          </Box>
+                <Container maxW='1xl' centerContent>
+                  <Stack pb='150px'>
+                    <HStack spacing='20'>
+                      <CircularProgress value={game[0].score/55*100} size='120px' />
+                      <Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>
+                    </HStack>
+                    <HStack spacing={6}>
+                      {game[0].score>=1?<Badge className='fade-in' variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
+                      {game[0].score>=25?<Badge className='fade-in' variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
+                      {game[0].score>=30?<Badge className='fade-in' variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
+                      {game[0].score>=35?<Badge className='fade-in' variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
+                    </HStack>
+                    <HStack spacing={6}>
+                      {game[0].score>=40?<Badge className='fade-in' variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
+                      {game[0].score>=45?<Badge className='fade-in' variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
+                      {game[0].score>=50?<Badge className='fade-in' variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
+                      {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
+                    </HStack>
+                  </Stack>
 
-        </ChakraProvider>
-        
-      );
+                  {game[0].errorMsg.length===2?
+                  <Alert className='fade-in-short' status='error' width='auto'>
+                    <AlertIcon />
+                    <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                    <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+                  </Alert>:<></>}
+                  
+                  <Stack direction='column' spacing={6} pt='25px'>
+                    <Box display='flex' justifyContent='left'>
+                      <ButtonGroup gap='2'>
+                        <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
+                        <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
+                      </ButtonGroup>
+                    </Box>
+
+                    <Box display='flex' justifyContent='center'>
+                      <ButtonGroup gap='2'>
+                        <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
+                        <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
+                        <Button size='lg' bg='white' onClick={() => this.setState(surrender)}>surrender</Button>
+                        <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
+                      </ButtonGroup>
+                    </Box>
+
+                    <Box display='flex' justifyContent='right'>
+                      <ButtonGroup gap='2'>
+                        <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
+                        <ModalRules />
+                      </ButtonGroup>
+                    </Box>
+                  </Stack>
+                </Container>
+              </HStack>
+
+              <Box>{
+                <UnorderedList>
+                  <HStack pt='25px' pb='25px'>
+                    {cards.filter(z => z.inUse === false && z.used === false).map(z => { return(
+                      <Container centerContent>
+                        <Image className='grow' alt='Card' width='140px' src={z.img} onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))} boxShadow='dark-lg'/>
+                      </Container>
+                    )})}
+                  </HStack>
+                </UnorderedList>
+              }</Box>
+            </Box>
+
+          </ChakraProvider>
+        );
+       }
     }
   }
   // ========================================
