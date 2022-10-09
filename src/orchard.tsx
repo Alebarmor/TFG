@@ -420,7 +420,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                 <Image w="auto" h="75px" alt='Logo' src='img/logo-mini.png' pl='10%'/>
                 <Breadcrumb fontWeight='semibold' fontSize='large' pl='30%' separator='|' spacing='10'>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href='#'>Options</BreadcrumbLink>
+                    <BreadcrumbLink target='_blank' href='https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg'>Options</BreadcrumbLink>
                   </BreadcrumbItem>
 
                   <BreadcrumbItem>
