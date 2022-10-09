@@ -4,23 +4,19 @@ import Board from './board';
 import './index.css';
 
 import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, useToast, extendTheme} from '@chakra-ui/react'
+  Text, Badge, CircularProgress, useToast, extendTheme, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
-import { BiTargetLock, BiRotateRight } from "react-icons/bi";
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from '@chakra-ui/react'
+import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
+import { BsEmojiLaughing } from "react-icons/bs";
+import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react'
 
 const customTheme = extendTheme(
   {
     styles: {
       global: {
         body: {
-          bg: 'rgb(143, 206, 60, 0.678)',
+          bgGradient: 'linear(to-l, #CEF576, #84FB95)',
         }
       }
     }
@@ -344,7 +340,26 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
       <>
-        <Button leftIcon={<Icon as={FiFileText}/>} size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
+        <Button leftIcon={<Icon as={FiFileText}/>} width='150px' size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
+  
+        <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalCloseButton />
+            <ModalBody>
+              <Image alt='Rules' src='img/rules.png'/>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </>
+    )
+  }
+
+  function ModalRules2() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    return (
+      <>
+        <Button rightIcon={<Icon as={FiFileText}/>} width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Check the rules</Button>
   
         <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
           <ModalOverlay />
@@ -397,15 +412,42 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       //Aqui las cosas para el inicio
       case 0:
         return(
-          <ChakraProvider theme={customTheme}> 
-            <Box >
-              <Container maxW='1xl' centerContent pt='25px' pb='25px'>
-                <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
-              </Container>
-              <Box display='flex' justifyContent='center'>
-              <Button size='lg' colorScheme='purple' onClick={() => this.setState(start)}>Start</Button>
-              </Box>
+
+          <ChakraProvider theme={customTheme}>
+
+            <Box bgGradient='linear(to-l, #166D3B, #000000)' w='100%' p={4} color='white'>
+              <HStack pb='5px'>
+                <Image w="auto" h="75px" alt='Logo' src='img/logo-mini.png' pl='10%'/>
+                <Breadcrumb fontWeight='semibold' fontSize='large' pl='30%' separator='|' spacing='10'>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href='#'>Options</BreadcrumbLink>
+                  </BreadcrumbItem>
+
+                  <BreadcrumbItem>
+                    <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgamedesigner/90925/mark-tuck'>About Mark Tuck</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  
+                  <BreadcrumbItem>
+                    <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgame/245487/orchard-9-card-solitaire-game'>Buy the Game!</BreadcrumbLink>
+                  </BreadcrumbItem>
+
+                  <BreadcrumbItem>
+                    <BreadcrumbLink target='_blank' href='https://github.com/Alebarmor/TFG'>GitHub Repository</BreadcrumbLink>
+                  </BreadcrumbItem>
+                </Breadcrumb>
+              </HStack>
             </Box>
+
+            <Container maxW='1xl' centerContent pt='15%'>
+              <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
+              as='b' fontFamily='sans-serif' fontSize='8xl' pb='10px'>Simple and exciting.</Text>
+              <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
+              as='b' fontFamily='sans-serif' fontSize='large' pb='40px'>Chekout the rules and enjoy the game.</Text>
+              <ButtonGroup gap='2'>
+                <ModalRules2 />
+                <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' onClick={() => this.setState(start)}>Let's get started!</Button>
+              </ButtonGroup>
+             </Container>
           </ChakraProvider>
         )
         //Aqui las cosas para el final
@@ -488,23 +530,23 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   <Stack direction='column' spacing={6} pt='25px'>
                     <Box display='flex' justifyContent='left'>
                       <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
-                        <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
+                        <Button leftIcon={<Icon as={BiRotateRight}/>} width='150px' size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
+                        <Button leftIcon={<Icon as={FiArrowUp}/>} width='150px' size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
+                        <Button leftIcon={<Icon as={BiExit}/>} width='150px' size='lg' colorScheme='pink' onClick={() => this.setState(surrender)}>Surrender</Button>
                       </ButtonGroup>
                     </Box>
 
                     <Box display='flex' justifyContent='center'>
                       <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
-                        <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
-                        <Button size='lg' bg='white' onClick={() => this.setState(surrender)}>surrender</Button>
-                        <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
+                        <Button leftIcon={<Icon as={FiArrowLeft}/>} width='150px' size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
+                        <Button leftIcon={<Icon as={BiTargetLock} />} width='150px' size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
+                        <Button leftIcon={<Icon as={FiArrowRight}/>} width='150px' size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
                       </ButtonGroup>
                     </Box>
 
                     <Box display='flex' justifyContent='right'>
                       <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
+                        <Button leftIcon={<Icon as={FiArrowDown}/>} width='150px' size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
                         <ModalRules />
                       </ButtonGroup>
                     </Box>
