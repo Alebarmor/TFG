@@ -3,8 +3,8 @@ import allCards from './cards_data';
 import Board from './board';
 import './index.css';
 
-import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, useToast, extendTheme} from '@chakra-ui/react'
+import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
+  Text, Badge, CircularProgress, useToast, } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight } from "react-icons/bi";
@@ -14,18 +14,6 @@ import {
   AlertTitle,
   AlertDescription,
 } from '@chakra-ui/react'
-
-const customTheme = extendTheme(
-  {
-    styles: {
-      global: {
-        body: {
-          bg: 'rgb(143, 206, 60, 0.678)',
-        }
-      }
-    }
-  }
-)
 
 const gameData={
   "elements":[    
@@ -134,8 +122,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       cards[index].turn = 0;
       cards[index].inUse = false;
     }
-
-    cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
+    game[0].turn===1?cards[newCardIndex].pos = [65,66,77,78,89,90]:cards[newCardIndex].pos = [62,63,74,75,86,87];
+    //cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
     cards[newCardIndex].turn = game[0].turn;
     cards[newCardIndex].inUse = true;
     return cards
@@ -144,7 +132,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function move(direction: string) {
     var index = indexOfCardInUse();
     game[0].errorMsg = [];
-    if (index !== 999)
+    if (index !== 999&&game[0].turn !== 1)
     {
       var pos = cards[index].pos;
       var res = pos;
@@ -200,7 +188,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     var index = indexOfCardInUse();
     game[0].errorMsg = [];
 
-    if (index !== 999)
+    if (index !== 999&&game[0].turn !== 1)
     {
       var pos = cards[index].pos;
       var res = cards[index].pos;
@@ -383,35 +371,24 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     )
   }
 
-  function start(){
-    game[0].turn=1;
-    return game;
-  }
-  function surrender(){
-    game[0].turn=10;
-    return game;
-  }
   class Game extends React.Component {
     render() {
       switch(game[0].turn){
       //Aqui las cosas para el inicio
       case 0:
         return(
-          <ChakraProvider theme={customTheme}> 
             <Box >
               <Container maxW='1xl' centerContent pt='25px' pb='25px'>
                 <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
               </Container>
               <Box display='flex' justifyContent='center'>
-              <Button size='lg' colorScheme='purple' onClick={() => this.setState(start)}>Start</Button>
+              <Button size='lg' colorScheme='purple' onClick={() => this.setState(function start(){game[0].turn=1;return game;})}>Start</Button>
               </Box>
             </Box>
-          </ChakraProvider>
         )
         //Aqui las cosas para el final
       case 10:
         return(
-          <ChakraProvider theme={customTheme}> 
             <Box >
               <Container maxW='1xl' centerContent pt='25px' pb='25px'>
                 <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
@@ -437,14 +414,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                 </Stack>
               </Box>
             </Box>
-          </ChakraProvider>
         )
 
       //aqui va lo demas he mal metido el boton de surrender y el color de fondo es distinto
       default:  
         return (
-          <ChakraProvider theme={customTheme}>
-
             <Box>
 
               <Container maxW='1xl' centerContent pt='25px' pb='25px'>
@@ -479,36 +453,44 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   </Stack>
 
                   {game[0].errorMsg.length===2?
-                  <Alert className='fade-in-short' status='error' width='auto'>
-                    <AlertIcon />
-                    <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
-                    <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
-                  </Alert>:<></>}
-                  
-                  <Stack direction='column' spacing={6} pt='25px'>
-                    <Box display='flex' justifyContent='left'>
-                      <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
-                        <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
-                      </ButtonGroup>
-                    </Box>
+                    <Alert className='fade-in-short' status='error' width='auto'>
+                      <AlertIcon />
+                      <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                      <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+                    </Alert>:<></>}
+                  {game[0].turn>=2?
+                    <Stack direction='column' spacing={6} pt='25px'>
+                      <Box display='flex' justifyContent='left'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={BiRotateRight}/>} size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
+                          <Button leftIcon={<Icon as={FiArrowUp}/>} size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
+                        </ButtonGroup>
+                      </Box>
 
-                    <Box display='flex' justifyContent='center'>
-                      <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
-                        <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
-                        <Button size='lg' bg='white' onClick={() => this.setState(surrender)}>surrender</Button>
-                        <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
-                      </ButtonGroup>
-                    </Box>
+                      <Box display='flex' justifyContent='center'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={FiArrowLeft}/>} size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
+                          <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
+                          <Button size='lg' bg='white' onClick={() => this.setState(function surrender(){game[0].turn=10;return game;})}>surrender</Button>
+                          <Button leftIcon={<Icon as={FiArrowRight}/>} size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
+                        </ButtonGroup>
+                      </Box>
 
-                    <Box display='flex' justifyContent='right'>
-                      <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
-                        <ModalRules />
-                      </ButtonGroup>
-                    </Box>
-                  </Stack>
+                      <Box display='flex' justifyContent='right'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={FiArrowDown}/>} size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
+                          <ModalRules />
+                        </ButtonGroup>
+                      </Box>
+                    </Stack> :
+                    <Stack direction='column' spacing={6} pt='25px'>
+                      <Box display='flex' justifyContent='center'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
+                          <ModalRules />
+                        </ButtonGroup>
+                      </Box>
+                    </Stack>}
                 </Container>
               </HStack>
 
@@ -525,7 +507,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
               }</Box>
             </Box>
 
-          </ChakraProvider>
         );
        }
     }
