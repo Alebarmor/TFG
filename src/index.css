@@ -46,12 +46,12 @@ body {
     font-size: 24px;
     font-weight: bold;
     line-height: 68px;
-    height: 68px;
+    height: 55px;
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
     text-align: center;
-    width: 68px;
+    width: 55px;
   }
   
   .square:focus {

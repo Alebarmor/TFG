@@ -3,25 +3,14 @@ import allCards from './cards_data';
 import Board from './board';
 import './index.css';
 
-import { Box, Image, Button, ButtonGroup, Stack, ChakraProvider, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, useToast, extendTheme, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
+import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
+  Text, Badge, CircularProgress, useToast, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
 import { BsEmojiLaughing } from "react-icons/bs";
 import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react'
-
-const customTheme = extendTheme(
-  {
-    styles: {
-      global: {
-        body: {
-          bgGradient: 'linear(to-l, #CEF576, #84FB95)',
-        }
-      }
-    }
-  }
-)
+import { motion } from "framer-motion"
 
 const gameData={
   "elements":[    
@@ -131,7 +120,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       cards[index].inUse = false;
     }
 
-    cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
+    game[0].turn===1?cards[newCardIndex].pos = [65,66,77,78,89,90]:cards[newCardIndex].pos = [62,63,74,75,86,87];
+    //cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
     cards[newCardIndex].turn = game[0].turn;
     cards[newCardIndex].inUse = true;
     return cards
@@ -140,8 +130,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function move(direction: string) {
     var index = indexOfCardInUse();
     game[0].errorMsg = [];
-    if (index !== 999)
-    {
+
+    if (index !== 999&&game[0].turn !== 1) {
       var pos = cards[index].pos;
       var res = pos;
 
@@ -196,8 +186,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     var index = indexOfCardInUse();
     game[0].errorMsg = [];
 
-    if (index !== 999)
-    {
+    if (index !== 999&&game[0].turn !== 1) {
       var pos = cards[index].pos;
       var res = cards[index].pos;
       let rotation = cards[index].rotation;
@@ -306,7 +295,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
   function place() {
     var index = indexOfCardInUse();
-    console.log(game[0].errorMsg)
 
     if (index !== 999) {
       var hs = gethits(index);
@@ -340,8 +328,9 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
       <>
-        <Button leftIcon={<Icon as={FiFileText}/>} width='150px' size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>
-  
+        {game[0].turn===0?<Button rightIcon={<Icon as={FiFileText}/>} width='200px' size='lg' colorScheme='blackAlpha' variant='solid' onClick={onOpen}>Check the rules</Button>:<></>}
+        {game[0].turn!==0?<Button leftIcon={<Icon as={FiFileText}/>} width='150px' size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>:<></>}
+
         <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
           <ModalOverlay />
           <ModalContent>
@@ -355,24 +344,49 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     )
   }
 
-  function ModalRules2() {
-    const { isOpen, onOpen, onClose } = useDisclosure()
+  function EndMessage() {
+    var message = '';
+    var score = game[0].score;
+    if (score === 0) {
+      message = 'Place a card! Is the only thing you have to do, mate.';
+    } else if (score > 0 && score <= 10) {
+      message = 'Well, this is awkward, but you have to improve a lot, buddy...';
+    } else if (score > 10 && score <= 20) {
+      message = 'Perseverance is the key to success. Keep trying!';
+    } else if (score > 20 && score <= 30) {
+      message = 'What a good score! But there is a long way yet.';
+    } else if (score > 30 && score <= 40) {
+      message = "You're good at this, and also near the end. Don't give up!";
+    } else if (score > 40 && score <= 50) {
+      message = 'That 55 points are just around the corner! Keep it up!';
+    }  else if (score > 50 && score <= 54) {
+      message = "At the gates of heaven... Go for it, mate! Almost perfect!";
+    } else if (score > 55) {
+      message = "I didn't know I was treating with the God of Trees! Congratulations!";
+    }
     return (
       <>
-        <Button rightIcon={<Icon as={FiFileText}/>} width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Check the rules</Button>
-  
-        <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalCloseButton />
-            <ModalBody>
-              <Image alt='Rules' src='img/rules.png'/>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
+              as='b' fontFamily='sans-serif' fontSize='2xl' pb='30px'>{message}</Text>
       </>
     )
   }
+
+  function restart() {
+    game[0].score = 0;
+    game[0].turn = 1;
+    game[0].rottenFruits = 0;
+
+    var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+    listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
+
+    let barajaAleatoria = listaNumeros.slice(0,9);
+    cards = [];
+    cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
+
+    return cards;
+  }
+
 
   function ToastExample() {
     const toast = useToast()
@@ -398,162 +412,201 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     )
   }
 
-  function start(){
-    game[0].turn=1;
-    return game;
+  function Navbar() {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 1 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.5,
+          ease: [0, 0.71, 0.2, 1.01]
+        }}
+      >
+        <Box bgGradient='linear(to-l, #166D3B, #000000)' w='100%' p={4} color='white'>
+          <HStack pb='5px'>
+            <Image w="auto" h="75px" alt='Logo' src='img/logo-mini.png' pl='10%'/>
+            <Breadcrumb fontWeight='semibold' fontSize='large' pl='30%' separator='|' spacing='10'>
+              <BreadcrumbItem>
+                <BreadcrumbLink target='_blank' href='https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg'>Options/Home</BreadcrumbLink>
+              </BreadcrumbItem>
+
+              <BreadcrumbItem>
+                <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgamedesigner/90925/mark-tuck'>About Mark Tuck</BreadcrumbLink>
+              </BreadcrumbItem>
+                    
+              <BreadcrumbItem>
+                <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgame/245487/orchard-9-card-solitaire-game'>Buy the Game!</BreadcrumbLink>
+              </BreadcrumbItem>
+
+              <BreadcrumbItem>
+                <BreadcrumbLink target='_blank' href='https://github.com/Alebarmor/TFG'>GitHub Repository</BreadcrumbLink>
+              </BreadcrumbItem>
+            </Breadcrumb>
+          </HStack>
+        </Box>
+      </motion.div>
+    )
   }
-  function surrender(){
-    game[0].turn=10;
-    return game;
+
+  function Footer() {
+    
   }
+
+  function ScoreAndBadges() {
+    return (
+      <>
+        <HStack spacing='20'>
+          <CircularProgress value={game[0].score/55*100} size='120px' />
+          {game[0].turn===10?<Text as='b' fontSize='70px' color='#3B3B3B'>Score: {game[0].score}</Text>:<></>}
+          {game[0].turn!==10?<Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>:<></>}
+        </HStack>
+        <HStack spacing={6}>
+          {game[0].score>=1?<Badge className='fade-in' variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
+          {game[0].score>=25?<Badge className='fade-in' variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
+          {game[0].score>=30?<Badge className='fade-in' variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
+          {game[0].score>=35?<Badge className='fade-in' variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
+        </HStack>
+        <HStack spacing={6}>
+          {game[0].score>=40?<Badge className='fade-in' variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
+          {game[0].score>=45?<Badge className='fade-in' variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
+          {game[0].score>=50?<Badge className='fade-in' variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
+          {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
+        </HStack>
+      </>
+    )
+  }
+
   class Game extends React.Component {
     render() {
+      <Navbar />
       switch(game[0].turn){
-      //Aqui las cosas para el inicio
       case 0:
         return(
-
-          <ChakraProvider theme={customTheme}>
-
-            <Box bgGradient='linear(to-l, #166D3B, #000000)' w='100%' p={4} color='white'>
-              <HStack pb='5px'>
-                <Image w="auto" h="75px" alt='Logo' src='img/logo-mini.png' pl='10%'/>
-                <Breadcrumb fontWeight='semibold' fontSize='large' pl='30%' separator='|' spacing='10'>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink target='_blank' href='https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg'>Options</BreadcrumbLink>
-                  </BreadcrumbItem>
-
-                  <BreadcrumbItem>
-                    <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgamedesigner/90925/mark-tuck'>About Mark Tuck</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  
-                  <BreadcrumbItem>
-                    <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgame/245487/orchard-9-card-solitaire-game'>Buy the Game!</BreadcrumbLink>
-                  </BreadcrumbItem>
-
-                  <BreadcrumbItem>
-                    <BreadcrumbLink target='_blank' href='https://github.com/Alebarmor/TFG'>GitHub Repository</BreadcrumbLink>
-                  </BreadcrumbItem>
-                </Breadcrumb>
-              </HStack>
-            </Box>
-
+          <>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.5,
+                ease: [0, 0.71, 0.2, 1.01]
+              }}
+            >
             <Container maxW='1xl' centerContent pt='15%'>
               <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
               as='b' fontFamily='sans-serif' fontSize='8xl' pb='10px'>Simple and exciting.</Text>
               <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
               as='b' fontFamily='sans-serif' fontSize='large' pb='40px'>Chekout the rules and enjoy the game.</Text>
               <ButtonGroup gap='2'>
-                <ModalRules2 />
-                <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' onClick={() => this.setState(start)}>Let's get started!</Button>
+                <ModalRules />
+                <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha'
+                  onClick={() => this.setState(function start(){game[0].turn=1;return game;})}>Let's get started!</Button>
               </ButtonGroup>
-             </Container>
-          </ChakraProvider>
+            </Container>
+            </motion.div>
+          </>
         )
-        //Aqui las cosas para el final
+
       case 10:
         return(
-          <ChakraProvider theme={customTheme}> 
-            <Box >
-              <Container maxW='1xl' centerContent pt='25px' pb='25px'>
-                <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
-              </Container>
-              <Box display='flex' justifyContent='center'>
-               <Stack pb='150px'>
-                  <HStack spacing='20'>
-                    <CircularProgress value={game[0].score/55*100} size='120px' />
-                    <Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>
-                  </HStack>
-                  <HStack spacing={6}>
-                    {game[0].score>=1?<Badge className='fade-in' variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
-                    {game[0].score>=25?<Badge className='fade-in' variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
-                    {game[0].score>=30?<Badge className='fade-in' variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
-                    {game[0].score>=35?<Badge className='fade-in' variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
-                  </HStack>
-                  <HStack spacing={6}>
-                    {game[0].score>=40?<Badge className='fade-in' variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
-                    {game[0].score>=45?<Badge className='fade-in' variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
-                    {game[0].score>=50?<Badge className='fade-in' variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
-                    {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
-                  </HStack>
-                </Stack>
-              </Box>
-            </Box>
-          </ChakraProvider>
+          <>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 0,
+                ease: [0, 0.71, 0.2, 1.01]
+              }}
+            >
+            <Container maxW='1xl' centerContent pt='15%'>
+              <Stack pb='20px'>
+                <ScoreAndBadges />
+              </Stack>
+              <EndMessage />
+              <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
+                onClick={() => this.setState(restart)}>Try again</Button>
+            </Container></motion.div>
+          </>
         )
 
-      //aqui va lo demas he mal metido el boton de surrender y el color de fondo es distinto
       default:  
         return (
-          <ChakraProvider theme={customTheme}>
-
-            <Box>
-
-              <Container maxW='1xl' centerContent pt='25px' pb='25px'>
-                <Image alt='Logo' src='img/Title.png' w="auto" h="250px"/>
-              </Container>
-                          
-              <HStack pb='5px'>
+          <>
+            <Box pt='50px'>
+              <HStack pb='10px'>
                 <Container maxW='1xl' centerContent>
-                  <Box>
-                    <Board cards={cards}/>
-                  </Box>
+                  <motion.div
+                  initial={{ opacity: 0, scale: 1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 2,
+                    delay: 0,
+                    ease: [0, 0.71, 0.2, 1.01]
+                  }}>
+                    <Box>
+                      <Board cards={cards}/>
+                    </Box>
+                  </motion.div>
                 </Container>
 
                 <Container maxW='1xl' centerContent>
-                  <Stack pb='150px'>
-                    <HStack spacing='20'>
-                      <CircularProgress value={game[0].score/55*100} size='120px' />
-                      <Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>
-                    </HStack>
-                    <HStack spacing={6}>
-                      {game[0].score>=1?<Badge className='fade-in' variant='subtle' bgColor='#FF6961'>Pal-tree</Badge>:<></>}
-                      {game[0].score>=25?<Badge className='fade-in' variant='subtle' bgColor='#FFB480'>Forget-apple</Badge>:<></>}
-                      {game[0].score>=30?<Badge className='fade-in' variant='subtle' bgColor='#F8F38D'>Satisfac-tree</Badge>:<></>}
-                      {game[0].score>=35?<Badge className='fade-in' variant='subtle' bgColor='#42D6A4'>Remark-apple</Badge>:<></>}
-                    </HStack>
-                    <HStack spacing={6}>
-                      {game[0].score>=40?<Badge className='fade-in' variant='subtle' bgColor='#08CAD1'>Tree-mendous</Badge>:<></>}
-                      {game[0].score>=45?<Badge className='fade-in' variant='subtle' bgColor='#59ADF6'>Plum-believable</Badge>:<></>}
-                      {game[0].score>=50?<Badge className='fade-in' variant='subtle' bgColor='#9D94FF'>Close to Pear-fect</Badge>:<></>}
-                      {game[0].score>=55?<Badge className='fade-in' variant='subtle' bgColor='#C780E8'>Almost imposs-apple!</Badge>:<></>}
-                    </HStack>
-                  </Stack>
+                  <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 3,
+                    delay: 0,
+                    ease: [0, 0.71, 0.2, 1.01]
+                  }}>
+                    <Stack pb='150px'>
+                      <ScoreAndBadges />
+                    </Stack>
 
-                  {game[0].errorMsg.length===2?
-                  <Alert className='fade-in-short' status='error' width='auto'>
-                    <AlertIcon />
-                    <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
-                    <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
-                  </Alert>:<></>}
-                  
-                  <Stack direction='column' spacing={6} pt='25px'>
-                    <Box display='flex' justifyContent='left'>
-                      <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={BiRotateRight}/>} width='150px' size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
-                        <Button leftIcon={<Icon as={FiArrowUp}/>} width='150px' size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
-                        <Button leftIcon={<Icon as={BiExit}/>} width='150px' size='lg' colorScheme='pink' onClick={() => this.setState(surrender)}>Surrender</Button>
-                      </ButtonGroup>
-                    </Box>
+                    {game[0].errorMsg.length===2?
+                    <Alert className='fade-in-short' status='error' width='auto'>
+                      <AlertIcon />
+                      <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                      <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+                    </Alert>:<></>}
+                    
+                    <Stack direction='column' spacing={6} pt='25px'>
+                      <Box display='flex' justifyContent='left'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={BiRotateRight}/>} width='150px' size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
+                          <Button leftIcon={<Icon as={FiArrowUp}/>} width='150px' size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
+                          <Button leftIcon={<Icon as={BiExit}/>} width='150px' size='lg' colorScheme='pink' onClick={() => this.setState(function surrender(){game[0].turn=10;return game;})}>Surrender</Button>
+                        </ButtonGroup>
+                      </Box>
 
-                    <Box display='flex' justifyContent='center'>
-                      <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={FiArrowLeft}/>} width='150px' size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
-                        <Button leftIcon={<Icon as={BiTargetLock} />} width='150px' size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
-                        <Button leftIcon={<Icon as={FiArrowRight}/>} width='150px' size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
-                      </ButtonGroup>
-                    </Box>
+                      <Box display='flex' justifyContent='center'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={FiArrowLeft}/>} width='150px' size='lg' colorScheme='red' onClick={() => this.setState(move("left"))}>Left</Button>
+                          <Button leftIcon={<Icon as={BiTargetLock} />} width='150px' size='lg' colorScheme='orange' onClick={() => this.setState(place)}>Place</Button>
+                          <Button leftIcon={<Icon as={FiArrowRight}/>} width='150px' size='lg' colorScheme='blue' onClick={() => this.setState(move("right"))}>Right</Button>
+                        </ButtonGroup>
+                      </Box>
 
-                    <Box display='flex' justifyContent='right'>
-                      <ButtonGroup gap='2'>
-                        <Button leftIcon={<Icon as={FiArrowDown}/>} width='150px' size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
-                        <ModalRules />
-                      </ButtonGroup>
-                    </Box>
-                  </Stack>
+                      <Box display='flex' justifyContent='right'>
+                        <ButtonGroup gap='2'>
+                          <Button leftIcon={<Icon as={FiArrowDown}/>} width='150px' size='lg' colorScheme='yellow' onClick={() => this.setState(move("down"))}>Down</Button>
+                          <ModalRules />
+                        </ButtonGroup>
+                      </Box>
+                    </Stack>
+                  </motion.div>
                 </Container>
               </HStack>
 
+              <motion.div
+                  initial={{ opacity: 0, scale: 1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 3,
+                    delay: 0,
+                    ease: [0, 0.71, 0.2, 1.01]
+                  }}>
               <Box>{
                 <UnorderedList>
                   <HStack pt='25px' pb='25px'>
@@ -564,14 +617,13 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     )})}
                   </HStack>
                 </UnorderedList>
-              }</Box>
+              }</Box></motion.div>
             </Box>
-
-          </ChakraProvider>
+          </>
         );
        }
     }
   }
   // ========================================
   export default Game;
-  export {Square, cards};
+  export {Square, cards, Navbar};
