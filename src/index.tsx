@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Game, { Navbar } from './orchard';
+import Game, { Footer, Navbar } from './orchard';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider, extendTheme} from '@chakra-ui/react'
 
@@ -25,6 +25,7 @@ root.render(
   <ChakraProvider theme={customTheme}> 
     <Navbar />
     <Game />
+    <Footer />
  </ChakraProvider> 
 );
 

@@ -4,7 +4,7 @@ import Board from './board';
 import './index.css';
 
 import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, useToast, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
@@ -52,45 +52,38 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       var dicePng = "";
       stack >=1? dicePng = "img/dado-" + cardColor + "-" + stack + ".png" : dicePng = "img/blank.ico";
 
+      var rotationHtml = "";
+      var classHtml = "";
+
       //rotten
       if (calScoreId(this.props.id) === 0 && cardsInPositionOrdered.length >= 2) {
         dicePng = "img/rotten.png";
       }
-      
-      switch (this.rotation) {
-        case 2:
-        return (
-          
-          <button className="square">
-             {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-             {<img src={this.img} height ="66" width="66" alt='' style={{transform: "rotate(90deg)", position:'relative', zIndex:'1' }} />}
-          </button>
-        );  
-  
-        case 3:
-        return (
-          <button className="square">
-            {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-            {<img src={this.img} height ="66" width="66" alt='' style={{transform: "rotate(180deg)", position:'relative', zIndex:'1' }} />}
-          </button>
-        );  
-  
-        case 4:
-        return (
-          <button className="square">
-            {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-            {<img src={this.img} height ="66" width="66" alt='' style={{transform: "rotate(270deg)", position:'relative', zIndex:'1' }} />}
-          </button>
-        );  
-      
-        default:
-          return (
-            <button className="square">
-              {<img src={dicePng} width="66" alt='' style={{ position:'absolute', zIndex:'2' }} /> }
-              {<img src={this.img} height ="66" width="66" alt='' style={{position:'relative', zIndex:'1'}}/>}
-            </button>
-          );
+
+      if (this.rotation === 2) {
+        rotationHtml = "rotate(90deg)";
+      } else if (this.rotation === 3) {
+        rotationHtml = "rotate(180deg)";
+      } else if (this.rotation === 4) {
+        rotationHtml = "rotate(270deg)";
+      } else {
+        rotationHtml = "none";
       }
+
+      if (upperCard !== undefined) {
+        if (upperCard.inUse === true) {
+          classHtml = 'blink_me';
+        }
+      } else {
+        classHtml = 'none';
+      }
+
+      return (
+        <button className="square">
+          {<img className={classHtml} src={dicePng} width="55" alt='' style={{ position:'absolute', zIndex:'3' }} /> }
+          {<img className={classHtml} src={this.img} height ="55" width="55" alt='' style={{transform:rotationHtml, position:'relative', zIndex:'2'}}/>}
+        </button>
+      );
     }
   }
 
@@ -347,7 +340,9 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function EndMessage() {
     var message = '';
     var score = game[0].score;
-    if (score === 0) {
+    if (score < 0) {
+      message = "Negative numbers? That's not what you want to do... Check the rules!";
+    } else if (score === 0) {
       message = 'Place a card! Is the only thing you have to do, mate.';
     } else if (score > 0 && score <= 10) {
       message = 'Well, this is awkward, but you have to improve a lot, buddy...';
@@ -377,39 +372,20 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     game[0].turn = 1;
     game[0].rottenFruits = 0;
 
-    var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
-    listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
+    allCards.elements.map(x => x.pos = [777,777,777,777,777,777]);
+    allCards.elements.map(x => x.used = false);
+    allCards.elements.map(x => x.turn = 0);
+    allCards.elements.map(x => x.rotation = 1);
 
-    let barajaAleatoria = listaNumeros.slice(0,9);
+
+    var listaNumerosRestart = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+    listaNumerosRestart = listaNumerosRestart.sort(function() {return Math.random() - 0.5});
+
+    let barajaAleatoriaRestart = listaNumerosRestart.slice(0,9);
     cards = [];
-    cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
+    cards = allCards.elements.filter(z => barajaAleatoriaRestart.includes(z.id));
 
     return cards;
-  }
-
-
-  function ToastExample() {
-    const toast = useToast()
-    return (
-      <Button leftIcon={<Icon as={BiTargetLock} />} size='lg' colorScheme='orange' 
-        onClick={() => { 
-          place();
-          var errorMsg = game[0].errorMsg;
-          if (errorMsg.length===2) {
-            toast({
-              title: errorMsg[0],
-              description: errorMsg[1],
-              status: 'warning',
-              duration: 5000,
-              isClosable: true,
-            });
-          }
-        }
-      }
-      >
-        Place
-      </Button>
-    )
   }
 
   function Navbar() {
@@ -427,10 +403,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           <HStack pb='5px'>
             <Image w="auto" h="75px" alt='Logo' src='img/logo-mini.png' pl='10%'/>
             <Breadcrumb fontWeight='semibold' fontSize='large' pl='30%' separator='|' spacing='10'>
-              <BreadcrumbItem>
-                <BreadcrumbLink target='_blank' href='https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg'>Options/Home</BreadcrumbLink>
-              </BreadcrumbItem>
-
               <BreadcrumbItem>
                 <BreadcrumbLink target='_blank' href='https://boardgamegeek.com/boardgamedesigner/90925/mark-tuck'>About Mark Tuck</BreadcrumbLink>
               </BreadcrumbItem>
@@ -450,7 +422,21 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function Footer() {
-    
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 1 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.5,
+          ease: [0, 0.71, 0.2, 1.01]
+        }}
+      >
+        <Container maxW='1xl' centerContent bottom='0' position='fixed'>
+          <Text fontSize='xs'>© 2022 Universidad de Sevilla & Mark Tuck. All/Some/No rights reserved.</Text>
+        </Container>
+      </motion.div>
+    )
   }
 
   function ScoreAndBadges() {
@@ -498,6 +484,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
               as='b' fontFamily='sans-serif' fontSize='8xl' pb='10px'>Simple and exciting.</Text>
               <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
               as='b' fontFamily='sans-serif' fontSize='large' pb='40px'>Chekout the rules and enjoy the game.</Text>
+
               <ButtonGroup gap='2'>
                 <ModalRules />
                 <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha'
@@ -556,7 +543,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{
-                    duration: 3,
+                    duration: 1,
                     delay: 0,
                     ease: [0, 0.71, 0.2, 1.01]
                   }}>
@@ -576,7 +563,22 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                         <ButtonGroup gap='2'>
                           <Button leftIcon={<Icon as={BiRotateRight}/>} width='150px' size='lg' colorScheme='purple' onClick={() => this.setState(rotate)}>Rotate</Button>
                           <Button leftIcon={<Icon as={FiArrowUp}/>} width='150px' size='lg' colorScheme='linkedin' onClick={() => this.setState(move("up"))}>Up</Button>
-                          <Button leftIcon={<Icon as={BiExit}/>} width='150px' size='lg' colorScheme='pink' onClick={() => this.setState(function surrender(){game[0].turn=10;return game;})}>Surrender</Button>
+                          <Popover>
+                            <PopoverTrigger>
+                              <Button leftIcon={<Icon as={BiExit}/>} width='150px' size='lg' colorScheme='pink' >Surrender</Button>
+                            </PopoverTrigger>
+                            <Portal>
+                              <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverHeader>Do you want to give up?</PopoverHeader>
+                                <PopoverCloseButton />
+                                <PopoverBody>
+                                  If you give up, you will end the game with the score you have so far, with no chance to go back. Are you sure about it?
+                                </PopoverBody>
+                                <PopoverFooter><Button colorScheme='red' onClick={() => this.setState(function surrender(){game[0].turn=10;return game;})}>I am sure</Button></PopoverFooter>
+                              </PopoverContent>
+                            </Portal>
+                          </Popover>
                         </ButtonGroup>
                       </Box>
 
@@ -626,4 +628,4 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
   // ========================================
   export default Game;
-  export {Square, cards, Navbar};
+  export {Square, cards, Navbar, Footer };
