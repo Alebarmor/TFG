@@ -124,7 +124,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     var index = indexOfCardInUse();
     game[0].errorMsg = [];
 
-    if (index !== 999&&game[0].turn !== 1) {
+    if (index !== 999 && game[0].turn !== 1) {
       var pos = cards[index].pos;
       var res = pos;
 
@@ -170,6 +170,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       }
 
       cards[index].pos = res;
+    } else if (index !== 999 && game[0].turn === 1) {
+      game[0].errorMsg = ["You can't move the card!","The first card must be placed in the center."];
     }
 
     return cards
@@ -179,7 +181,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     var index = indexOfCardInUse();
     game[0].errorMsg = [];
 
-    if (index !== 999&&game[0].turn !== 1) {
+    if (index !== 999 && game[0].turn !== 1) {
       var pos = cards[index].pos;
       var res = cards[index].pos;
       let rotation = cards[index].rotation;
@@ -247,6 +249,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         cards[index].rotation = rotation + 1;
       }
 
+    } else if (index !== 999 && game[0].turn === 1) {
+      game[0].errorMsg = ["You can't rotate the card!","The first card must be placed in the center."];
     }
 
     return cards
@@ -570,7 +574,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                             <Portal>
                               <PopoverContent>
                                 <PopoverArrow />
-                                <PopoverHeader>Do you want to give up?</PopoverHeader>
+                                <PopoverHeader><Text as='b' fontFamily='sans-serif'>Do you want to give up?</Text></PopoverHeader>
                                 <PopoverCloseButton />
                                 <PopoverBody>
                                   If you give up, you will end the game with the score you have so far, with no chance to go back. Are you sure about it?
