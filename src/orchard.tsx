@@ -60,14 +60,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         dicePng = "img/rotten.png";
       }
 
-      if (this.rotation === 2) {
-        rotationHtml = "rotate(90deg)";
-      } else if (this.rotation === 3) {
-        rotationHtml = "rotate(180deg)";
-      } else if (this.rotation === 4) {
-        rotationHtml = "rotate(270deg)";
-      } else {
-        rotationHtml = "none";
+      switch (this.rotation) {
+        case 2: rotationHtml = "rotate(90deg)"; break;
+        case 3: rotationHtml = "rotate(180deg)"; break;
+        case 4: rotationHtml = "rotate(270deg)"; break;
+        default: rotationHtml = "none"; break;
       }
 
       if (upperCard !== undefined) {
@@ -114,7 +111,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     }
 
     game[0].turn===1?cards[newCardIndex].pos = [65,66,77,78,89,90]:cards[newCardIndex].pos = [62,63,74,75,86,87];
-    //cards[newCardIndex].pos = [65,66,77,78,89,90]; // Posición en el centro del tablero
+    
     cards[newCardIndex].turn = game[0].turn;
     cards[newCardIndex].inUse = true;
     return cards
