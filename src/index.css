@@ -10,11 +10,11 @@ body {
 
   .grow { 
     transition: all .2s ease-in-out; 
-    }
+  }
     
   .grow:hover { 
     transform: scale(1.1); 
-    }
+  }
   
   .board-row:after {
     clear: both;
@@ -26,7 +26,13 @@ body {
     margin-bottom: 10px;
   }
 
-  .fade-in { animation: fadeIn 3s; }
+  .fade-in {
+    animation: fadeIn 1s;
+  }
+
+  .fade-in-short {
+    animation: fadeIn 0.5s;
+  }
 
   @keyframes fadeIn {
     0% { opacity: 0; }
@@ -40,12 +46,12 @@ body {
     font-size: 24px;
     font-weight: bold;
     line-height: 68px;
-    height: 68px;
+    height: 55px;
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
     text-align: center;
-    width: 68px;
+    width: 55px;
   }
   
   .square:focus {
@@ -54,4 +60,14 @@ body {
   
   .kbd-navigation .square:focus {
     background: #ddd;
+  }
+
+  .blink_me {
+    animation: blinker 1s linear infinite;
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0.7;
+    }
   }
