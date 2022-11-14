@@ -2,6 +2,7 @@ import React from 'react';
 import allCards from './cards_data';
 import Board from './board';
 import './index.css';
+import { useForm } from 'react-hook-form'
 
 import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
   Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow } from '@chakra-ui/react'
@@ -9,7 +10,7 @@ import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
 import { BsEmojiLaughing } from "react-icons/bs";
-import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react'
+import { Alert, AlertIcon, AlertTitle, AlertDescription, FormControl,FormLabel,Input,FormErrorMessage} from '@chakra-ui/react'
 import { motion } from "framer-motion"
 
 const gameData={
@@ -515,6 +516,24 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
               <EndMessage />
               <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
                 onClick={() => this.setState(restart)}>Try again</Button>
+              
+              <Popover>
+                <PopoverTrigger>
+                  <Button leftIcon={<Icon as={BiExit}/>} width='200px' size='lg' colorScheme='pink' >Submit Score</Button>
+                </PopoverTrigger>
+                <Portal>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverBody>
+                    <HookForm />
+                    </PopoverBody>
+                    <PopoverFooter></PopoverFooter>
+                      </PopoverContent>
+                    </Portal>
+              </Popover>
+                    
+                 
             </Container></motion.div>
           </>
         )
@@ -630,3 +649,48 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   // ========================================
   export default Game;
   export {Square, cards, Navbar, Footer };
+
+
+  function HookForm() {
+    const {
+      handleSubmit,
+      register,
+      formState: { errors, isSubmitting },
+    } = useForm()
+  
+    function onSubmit(values: any) {
+     window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})})
+     window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+    }
+  
+    return (
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormControl >
+          <FormLabel htmlFor='name'>Please specify a name</FormLabel>
+          <Input
+            id='name'
+            placeholder='name'
+            {...register('name', {
+              required: 'This is required',
+              minLength: { value: 4, message: 'Minimum length should be 4' },
+            })}
+          />
+          <FormErrorMessage>
+            
+          </FormErrorMessage>
+        </FormControl>
+        <Button mt={4} colorScheme='pink' isLoading={isSubmitting} type='submit'>
+          Submit Score
+        </Button>
+      </form>
+    )
+  }
+function addScore(id: any): any {
+  window.fetch('https://keepthescore.co/api/jziyrqggxhe/score/', {method: 'POST',headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        'player_id': id,
+        'score': gameData.elements[0].score
+    })
+});
+}
+
