@@ -21,7 +21,8 @@ const gameData={
       "scoreList": [1, 3, 6, 10],
       "rottenFruits":0,
       "errorMsg": [""],
-      "playerList":[""]
+      "playerList":[""],
+      "playerScoreList":[""]
   }
   ]
 }
@@ -661,29 +662,18 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     
     async function onSubmit(values: any) {
       game[0].errorMsg = [];
-      window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => getplayerList(scoreboard.players.map((x: { name: any; })=>x.name)));
+      getPlayerList();
+      getPlayerScoreList()
       const result = await resolveAfter1Seconds();
-      
-      console.log(values.name.length);
       if(values.name.length<=3){
-        console.log("verg")
-        game[0].errorMsg = ["Name min 4","Try it again in other place."];
+        game[0].errorMsg = ["Too short","must have at least 4 characters"];
       }else{
         if(game[0].playerList.includes(values.name)) {
-          game[0].errorMsg = ["Name repate","Try it again in other place."];
-          console.log("verga")
-          return(
-            <Alert status='error'>
-              <AlertIcon />
-                <AlertTitle>Nombre repetido!</AlertTitle>
-                <AlertDescription>Your Chakccccay be degraded.</AlertDescription>
-              </Alert>
-          )
+          game[0].errorMsg = ["Name is on use","Try another."];
         }else{
           
           window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
           const result = await resolveAfter1Seconds();
-          console.log("putisa2")
           window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
           
       }
@@ -729,11 +719,6 @@ function addScore(id: any): any {
 }
 
 
-function getplayerList(arg0: any) {
- game[0].playerList=arg0;
- return game;
-}
-
 function resolveAfter1Seconds() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -741,3 +726,22 @@ function resolveAfter1Seconds() {
     }, 1000);
   });
 }
+
+
+async function getPlayerList() {
+  const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
+  const scoreboard = await result.json();
+  const players = await scoreboard.players.map((x: { name: any; })=>x.name);
+  game[0].playerList=players;
+  return game
+}
+  
+  async function getPlayerScoreList() {
+    const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
+    const scoreboard = await result.json();
+    const playerScores = await scoreboard.players.map((x: { score: any; })=>x.score);
+    game[0].playerScoreList=playerScores;
+    return game
+   }
+
+
