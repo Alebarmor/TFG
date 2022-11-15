@@ -20,7 +20,8 @@ const gameData={
       "turn":0,
       "scoreList": [1, 3, 6, 10],
       "rottenFruits":0,
-      "errorMsg": [""]
+      "errorMsg": [""],
+      "playerList":[""]
   }
   ]
 }
@@ -533,7 +534,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     </Portal>
               </Popover>
                     
-                 
             </Container></motion.div>
           </>
         )
@@ -655,12 +655,42 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     const {
       handleSubmit,
       register,
-      formState: { errors, isSubmitting },
+      formState: {isSubmitting },
     } = useForm()
-  
-    function onSubmit(values: any) {
-     window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})})
-     window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+    
+    
+    async function onSubmit(values: any) {
+      game[0].errorMsg = [];
+      window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => getplayerList(scoreboard.players.map((x: { name: any; })=>x.name)));
+      const result = await resolveAfter1Seconds();
+      
+      console.log(values.name.length);
+      if(values.name.length<=3){
+        console.log("verg")
+        game[0].errorMsg = ["Name min 4","Try it again in other place."];
+      }else{
+        if(game[0].playerList.includes(values.name)) {
+          game[0].errorMsg = ["Name repate","Try it again in other place."];
+          console.log("verga")
+          return(
+            <Alert status='error'>
+              <AlertIcon />
+                <AlertTitle>Nombre repetido!</AlertTitle>
+                <AlertDescription>Your Chakccccay be degraded.</AlertDescription>
+              </Alert>
+          )
+        }else{
+          
+          window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
+          const result = await resolveAfter1Seconds();
+          console.log("putisa2")
+          window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+          
+      }
+      
+      }
+
+      return game;
     }
   
     return (
@@ -672,11 +702,15 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
             placeholder='name'
             {...register('name', {
               required: 'This is required',
-              minLength: { value: 4, message: 'Minimum length should be 4' },
             })}
           />
+          {game[0].errorMsg.length===2?
+                    <Alert className='fade-in-short' status='error' width='auto'>
+                      <AlertIcon />
+                      <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                      <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+                    </Alert>:<></>}
           <FormErrorMessage>
-            
           </FormErrorMessage>
         </FormControl>
         <Button mt={4} colorScheme='pink' isLoading={isSubmitting} type='submit'>
@@ -694,3 +728,16 @@ function addScore(id: any): any {
 });
 }
 
+
+function getplayerList(arg0: any) {
+ game[0].playerList=arg0;
+ return game;
+}
+
+function resolveAfter1Seconds() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, 1000);
+  });
+}
