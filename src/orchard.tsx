@@ -5,23 +5,13 @@ import './index.css';
 import { useForm } from 'react-hook-form'
 
 import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow, ModalHeader, ModalFooter } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
 import { BsEmojiLaughing, BsClipboardData } from "react-icons/bs";
-import { Alert, AlertIcon, AlertTitle, AlertDescription, FormControl, FormLabel, Input, FormErrorMessage} from '@chakra-ui/react'
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-} from '@chakra-ui/react'
+import { Alert, AlertIcon, AlertTitle, AlertDescription, FormControl, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react'
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/react'
 import { motion } from "framer-motion"
 
 const gameData={
@@ -43,7 +33,8 @@ listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
 
 let barajaAleatoria = listaNumeros.slice(0,9);
 var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
-var game = gameData.elements
+var game = gameData.elements;
+let playerData: Array<{ rank: number, name: string, score: number }> = [];
 
 class Square extends React.Component<{id:number, cards:any}, { }> {
   img: string = "";
@@ -545,10 +536,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     </PopoverContent>
                   </Portal>
                 </Popover>
+                <ModalBoard />
               </ButtonGroup>
-
-              <LeaderBoard />
-                 
             </Container></motion.div>
           </>
         )
@@ -746,7 +735,7 @@ async function getPlayerList() {
   const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
   const scoreboard = await result.json();
   const players = await scoreboard.players.map((x: { name: any; })=>x.name);
-  game[0].playerList=players;
+  game[0].playerList = players;
   return game
 }
   
@@ -754,57 +743,67 @@ async function getPlayerList() {
     const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
     const scoreboard = await result.json();
     const playerScores = await scoreboard.players.map((x: { score: any; })=>x.score);
-    game[0].playerScoreList=playerScores;
+    game[0].playerScoreList = playerScores;
     return game
    }
 
 
-function LeaderBoard() {
+ async function LeaderBoard() {
+  getPlayerList();
+  getPlayerScoreList();
+  const result = await resolveAfter1Seconds();
+  playerData = [];
 
+  if (game[0].playerList.length > 0) {
+    for (let i = 0; i < game[0].playerList.length; i++) {
+      playerData.push({rank: i + 1, name: game[0].playerList[i], score: +game[0].playerScoreList[i]});
+    }
+  }
+ }
+
+ function ModalBoard() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
-      <TableContainer>
-        <Table size='sm' variant='striped' colorScheme='green'>
-          <Thead>
-            <Tr>
-              <Th>Rank</Th>
-              <Th>Player name</Th>
-              <Th isNumeric>score</Th>
-            </Tr>
-          </Thead>
-          <LeaderBoardData />
-        </Table>
-      </TableContainer>
+      <Button  width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Show leader board</Button>
 
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Leader Board</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TableContainer>
+              <Table size='lg' variant='striped' colorScheme='green'>
+                <Thead>
+                  <Tr>
+                    <Th>Rank</Th>
+                    <Th>Player name</Th>
+                    <Th isNumeric>score</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {
+                  playerData.map(
+                  data => 
+                  <Tr>
+                    <Td isNumeric>{data.rank}</Td>  
+                    <Td>{data.name}</Td>
+                    <Td isNumeric>{data.score}</Td>
+                  </Tr>
+                  )
+                  }
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={() => LeaderBoard()}>
+              Update data
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }
-
-function LeaderBoardData(values: any) {
-  var obj;
-
-  window.fetch('https://keepthescore.co/api/jziyrqggxhe/board/').then(res => res.json())
-  .then(data => {
-    obj = data;
-   })
-  .then(() => {
-    console.log(obj);
-   });
-
-  return (
-    <>
-    <Tbody>
-        {
-        obj.map(
-        player => 
-        <Tr>
-          <Td>{player.name}</Td>  
-          <Td>{player.name}</Td>
-          <Td isNumeric>{player.score}</Td>
-        </Tr>
-      )
-      }
-      </Tbody>
-    </>
-  )
- }
