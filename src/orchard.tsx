@@ -31,7 +31,9 @@ const gameData={
       "turn":0,
       "scoreList": [1, 3, 6, 10],
       "rottenFruits":0,
-      "errorMsg": [""]
+      "errorMsg": [""],
+      "playerList":[""],
+      "playerScoreList":[""]
   }
   ]
 }
@@ -668,12 +670,31 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     const {
       handleSubmit,
       register,
-      formState: { errors, isSubmitting },
+      formState: {isSubmitting },
     } = useForm()
-  
-    function onSubmit(values: any) {
-     window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})})
-     window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+    
+    
+    async function onSubmit(values: any) {
+      game[0].errorMsg = [];
+      getPlayerList();
+      getPlayerScoreList()
+      const result = await resolveAfter1Seconds();
+      if(values.name.length<=3){
+        game[0].errorMsg = ["Too short","must have at least 4 characters"];
+      }else{
+        if(game[0].playerList.includes(values.name)) {
+          game[0].errorMsg = ["Name is on use","Try another."];
+        }else{
+          
+          window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
+          const result = await resolveAfter1Seconds();
+          window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+          
+      }
+      
+      }
+
+      return game;
     }
   
     return (
@@ -685,11 +706,15 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
             placeholder='name'
             {...register('name', {
               required: 'This is required',
-              minLength: { value: 4, message: 'Minimum length should be 4' },
             })}
           />
+          {game[0].errorMsg.length===2?
+                    <Alert className='fade-in-short' status='error' width='auto'>
+                      <AlertIcon />
+                      <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                      <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+                    </Alert>:<></>}
           <FormErrorMessage>
-            
           </FormErrorMessage>
         </FormControl>
         <Button mt={4} colorScheme='pink' isLoading={isSubmitting} type='submit'>
@@ -706,6 +731,33 @@ function addScore(id: any): any {
     })
 });
 }
+
+
+function resolveAfter1Seconds() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, 1000);
+  });
+}
+
+
+async function getPlayerList() {
+  const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
+  const scoreboard = await result.json();
+  const players = await scoreboard.players.map((x: { name: any; })=>x.name);
+  game[0].playerList=players;
+  return game
+}
+  
+  async function getPlayerScoreList() {
+    const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
+    const scoreboard = await result.json();
+    const playerScores = await scoreboard.players.map((x: { score: any; })=>x.score);
+    game[0].playerScoreList=playerScores;
+    return game
+   }
+
 
 function LeaderBoard() {
 
