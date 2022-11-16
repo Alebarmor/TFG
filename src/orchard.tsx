@@ -9,8 +9,19 @@ import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedLis
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
-import { BsEmojiLaughing } from "react-icons/bs";
-import { Alert, AlertIcon, AlertTitle, AlertDescription, FormControl,FormLabel,Input,FormErrorMessage} from '@chakra-ui/react'
+import { BsEmojiLaughing, BsClipboardData } from "react-icons/bs";
+import { Alert, AlertIcon, AlertTitle, AlertDescription, FormControl, FormLabel, Input, FormErrorMessage} from '@chakra-ui/react'
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from '@chakra-ui/react'
 import { motion } from "framer-motion"
 
 const gameData={
@@ -514,12 +525,12 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                 <ScoreAndBadges />
               </Stack>
               <EndMessage />
-              <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
-                onClick={() => this.setState(restart)}>Try again</Button>
-              
-              <Popover>
+              <ButtonGroup gap='2'>
+                <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
+                  onClick={() => this.setState(restart)}>Try again</Button>
+                <Popover>
                 <PopoverTrigger>
-                  <Button leftIcon={<Icon as={BiExit}/>} width='200px' size='lg' colorScheme='pink' >Submit Score</Button>
+                  <Button leftIcon={<Icon as={BsClipboardData}/>} width='200px' size='lg' colorScheme='blackAlpha'>Submit Score</Button>
                 </PopoverTrigger>
                 <Portal>
                   <PopoverContent>
@@ -529,10 +540,12 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                     <HookForm />
                     </PopoverBody>
                     <PopoverFooter></PopoverFooter>
-                      </PopoverContent>
-                    </Portal>
-              </Popover>
-                    
+                    </PopoverContent>
+                  </Portal>
+                </Popover>
+              </ButtonGroup>
+
+              <LeaderBoard />
                  
             </Container></motion.div>
           </>
@@ -694,3 +707,52 @@ function addScore(id: any): any {
 });
 }
 
+function LeaderBoard() {
+
+  return (
+    <>
+      <TableContainer>
+        <Table size='sm' variant='striped' colorScheme='green'>
+          <Thead>
+            <Tr>
+              <Th>Rank</Th>
+              <Th>Player name</Th>
+              <Th isNumeric>score</Th>
+            </Tr>
+          </Thead>
+          <LeaderBoardData />
+        </Table>
+      </TableContainer>
+
+    </>
+  )
+}
+
+function LeaderBoardData(values: any) {
+  var obj;
+
+  window.fetch('https://keepthescore.co/api/jziyrqggxhe/board/').then(res => res.json())
+  .then(data => {
+    obj = data;
+   })
+  .then(() => {
+    console.log(obj);
+   });
+
+  return (
+    <>
+    <Tbody>
+        {
+        obj.map(
+        player => 
+        <Tr>
+          <Td>{player.name}</Td>  
+          <Td>{player.name}</Td>
+          <Td isNumeric>{player.score}</Td>
+        </Tr>
+      )
+      }
+      </Tbody>
+    </>
+  )
+ }
