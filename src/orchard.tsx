@@ -653,12 +653,12 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
 
 
   function HookForm() {
+    var correctSub 
     const {
       handleSubmit,
       register,
       formState: {isSubmitting },
     } = useForm()
-    
     
     async function onSubmit(values: any) {
       game[0].errorMsg = [];
@@ -668,26 +668,31 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       if(values.name.length<=3){
         game[0].errorMsg = ["Too short","must have at least 4 characters"];
       }else{
-        if(game[0].playerList.includes(values.name)) {
-          game[0].errorMsg = ["Name is on use","Try another."];
+        if (values.name.length>25) {
+        game[0].errorMsg = ["Too long","must have 25 characters max"];
         }else{
+          if(game[0].playerList.includes(values.name)) {
+            game[0].errorMsg = ["Name is on use","Try another."];
+          }else{
           
-          window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
-          const result = await resolveAfter1Seconds();
-          window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
-          
-      }
+            window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
+            const result = await resolveAfter1Seconds();
+            window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+            game[0].errorMsg = ["Correct submit"]
+        }
       
+        }
       }
 
       return game;
     }
-  
+    console.log(correctSub)
     return (
+      
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl >
-          <FormLabel htmlFor='name'>Please specify a name</FormLabel>
-          <Input
+          <FormLabel  htmlFor='name'>Please specify a name</FormLabel>
+          <Input 
             id='name'
             placeholder='name'
             {...register('name', {
@@ -700,6 +705,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                       <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
                       <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
                     </Alert>:<></>}
+          {game[0].errorMsg.length===1&&game[0].errorMsg[0]!==""?
+            <Alert status='success'>
+            <AlertIcon />
+            <AlertDescription>{game[0].errorMsg[0]}</AlertDescription>
+          </Alert>:<></>}
           <FormErrorMessage>
           </FormErrorMessage>
         </FormControl>
@@ -735,13 +745,13 @@ async function getPlayerList() {
   game[0].playerList=players;
   return game
 }
-  
-  async function getPlayerScoreList() {
-    const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
-    const scoreboard = await result.json();
-    const playerScores = await scoreboard.players.map((x: { score: any; })=>x.score);
-    game[0].playerScoreList=playerScores;
-    return game
-   }
+
+async function getPlayerScoreList() {
+  const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
+  const scoreboard = await result.json();
+  const playerScores = await scoreboard.players.map((x: { score: any; })=>x.score);
+  game[0].playerScoreList=playerScores;
+  return game
+}
 
 
