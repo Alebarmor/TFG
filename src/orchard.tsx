@@ -546,8 +546,6 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                   </Portal>
                 </Popover>
               </ButtonGroup>
-
-              <LeaderBoard />
                  
             </Container></motion.div>
           </>
@@ -767,54 +765,3 @@ async function getPlayerScoreList() {
   game[0].playerScoreList=playerScores;
   return game
 }
-
-
-function LeaderBoard() {
-
-  return (
-    <>
-      <TableContainer>
-        <Table size='sm' variant='striped' colorScheme='green'>
-          <Thead>
-            <Tr>
-              <Th>Rank</Th>
-              <Th>Player name</Th>
-              <Th isNumeric>score</Th>
-            </Tr>
-          </Thead>
-          <LeaderBoardData />
-        </Table>
-      </TableContainer>
-
-    </>
-  )
-}
-
-function LeaderBoardData(values: any) {
-  var obj;
-
-  window.fetch('https://keepthescore.co/api/jziyrqggxhe/board/').then(res => res.json())
-  .then(data => {
-    obj = data;
-   })
-  .then(() => {
-    console.log(obj);
-   });
-
-  return (
-    <>
-    <Tbody>
-        {
-        obj.map(
-        player => 
-        <Tr>
-          <Td>{player.name}</Td>  
-          <Td>{player.name}</Td>
-          <Td isNumeric>{player.score}</Td>
-        </Tr>
-      )
-      }
-      </Tbody>
-    </>
-  )
- }
