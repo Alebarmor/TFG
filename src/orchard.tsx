@@ -521,21 +521,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
               <ButtonGroup gap='2'>
                 <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
                   onClick={() => this.setState(restart)}>Try again</Button>
-                <Popover>
-                <PopoverTrigger>
-                  <Button leftIcon={<Icon as={BsClipboardData}/>} width='200px' size='lg' colorScheme='blackAlpha'>Submit Score</Button>
-                </PopoverTrigger>
-                <Portal>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverBody>
-                    <HookForm />
-                    </PopoverBody>
-                    <PopoverFooter></PopoverFooter>
-                    </PopoverContent>
-                  </Portal>
-                </Popover>
+                  <HookForm/>
                 <ModalBoard />
               </ButtonGroup>
             </Container></motion.div>
@@ -663,6 +649,8 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       formState: {isSubmitting },
     } = useForm()
     
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     async function onSubmit(values: any) {
       game[0].errorMsg = [];
       getPlayerList();
@@ -691,35 +679,38 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     }
     console.log(correctSub)
     return (
-      
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormControl >
-          <FormLabel  htmlFor='name'>Please specify a name</FormLabel>
-          <Input 
-            id='name'
-            placeholder='name'
-            {...register('name', {
-              required: 'This is required',
-            })}
-          />
-          {game[0].errorMsg.length===2?
-                    <Alert className='fade-in-short' status='error' width='auto'>
-                      <AlertIcon />
-                      <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
-                      <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+      <>
+      <Button leftIcon={<Icon as={BsClipboardData}/>} width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Submit Score</Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent top={"60%"}>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FormControl >
+                <FormLabel  htmlFor='name'>Please specify a name</FormLabel>
+                <Input id='name' placeholder='name'{...register('name', {required: 'This is required',})}/>
+                {game[0].errorMsg.length===2?
+                  <Alert className='fade-in-short' status='error' width='auto'>
+                    <AlertIcon />
+                    <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                    <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
                     </Alert>:<></>}
-          {game[0].errorMsg.length===1&&game[0].errorMsg[0]!==""?
-            <Alert status='success'>
-            <AlertIcon />
-            <AlertDescription>{game[0].errorMsg[0]}</AlertDescription>
-          </Alert>:<></>}
-          <FormErrorMessage>
-          </FormErrorMessage>
-        </FormControl>
-        <Button mt={4} colorScheme='pink' isLoading={isSubmitting} type='submit'>
-          Submit Score
-        </Button>
-      </form>
+                {game[0].errorMsg.length===1&&game[0].errorMsg[0]!==""?
+                  <Alert status='success'>
+                  <AlertIcon />
+                  <AlertDescription>{game[0].errorMsg[0]}</AlertDescription>
+                  </Alert>:<></>}
+              </FormControl>
+              <Button mt={4} colorScheme='pink' isLoading={isSubmitting} type='submit'>
+                Submit Score
+              </Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      </>
+      
     )
   }
 function addScore(id: any): any {
