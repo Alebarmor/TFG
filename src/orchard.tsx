@@ -5,7 +5,7 @@ import './index.css';
 import { useForm } from 'react-hook-form'
 
 import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow, ModalHeader, ModalFooter } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow, ModalHeader, ModalFooter, Center } from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
@@ -502,6 +502,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         )
 
       case 10:
+        UpdateLeaderBoard();
         return(
           <>
             <motion.div
@@ -677,11 +678,11 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
           if(game[0].playerList.includes(values.name)) {
             game[0].errorMsg = ["Name is on use","Try another."];
           }else{
-          
             window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
             const result = await resolveAfter1Seconds();
             window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
             game[0].errorMsg = ["Correct submit"]
+            UpdateLeaderBoard();
         }
       
         }
@@ -722,6 +723,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       </form>
     )
   }
+
 function addScore(id: any): any {
   window.fetch('https://keepthescore.co/api/jziyrqggxhe/score/', {method: 'POST',headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
@@ -730,7 +732,6 @@ function addScore(id: any): any {
     })
 });
 }
-
 
 function resolveAfter1Seconds() {
   return new Promise(resolve => {
@@ -757,12 +758,13 @@ async function getPlayerList() {
     return game
    }
 
-
- async function LeaderBoard() {
+ async function UpdateLeaderBoard() {
   getPlayerList();
   getPlayerScoreList();
   const result = await resolveAfter1Seconds();
   playerData = [];
+
+  console.log("LLAMADA");
 
   if (game[0].playerList.length > 0) {
     for (let i = 0; i < game[0].playerList.length; i++) {
@@ -775,31 +777,31 @@ async function getPlayerList() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
-      <Button  width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Show leader board</Button>
+      <Button  width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Show leaderboard</Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Leader Board</ModalHeader>
+        <ModalContent maxWidth="30%" bgGradient='linear(to-t, #028cf3, #2feaa8)'>
+          <Center><ModalHeader><Text fontSize='25px' as='b'>LEADERBOARD</Text></ModalHeader></Center>
           <ModalCloseButton />
           <ModalBody>
             <TableContainer>
-              <Table size='lg' variant='striped' colorScheme='green'>
+              <Table size='lg'>
                 <Thead>
                   <Tr>
-                    <Th>Rank</Th>
-                    <Th>Player name</Th>
-                    <Th isNumeric>score</Th>
+                    <Th><Text color="black" fontSize='18px' as='b'>Rank</Text></Th>
+                    <Th><Text color="black" fontSize='18px' as='b'>Player name</Text></Th>
+                    <Th><Text color="black" fontSize='18px' as='b'>score</Text></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {
+                {
                   playerData.map(
                   data => 
                   <Tr>
-                    <Td isNumeric>{data.rank}</Td>  
-                    <Td>{data.name}</Td>
-                    <Td isNumeric>{data.score}</Td>
+                    <Td><Text as="b">{data.rank}</Text></Td>  
+                    <Td><Text as="b">{data.name}</Text></Td>
+                    <Td isNumeric><Text as="b">{data.score}</Text></Td>
                   </Tr>
                   )
                   }
@@ -807,11 +809,6 @@ async function getPlayerList() {
               </Table>
             </TableContainer>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={() => LeaderBoard()}>
-              Update data
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
