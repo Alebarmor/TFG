@@ -1,5 +1,6 @@
 import React from 'react';
-import { Square, cards } from './orchard';
+import {cards } from './orchard';
+import Square from './square';
 import './index.css';
 
 class Board extends React.Component<{cards:any }, { }> {
