@@ -1,5 +1,5 @@
 import React from 'react';
-import {cards} from './orchard';
+import { cards } from './orchard';
 import { calScoreId } from './functions';
 
 class Square extends React.Component<{id:number, cards:any}, { }> {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {cards } from './orchard';
+import { cards } from './orchard';
 import Square from './square';
 import './index.css';
 

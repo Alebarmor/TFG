@@ -1,4 +1,4 @@
-import {game} from './orchard';
+import { game } from './orchard';
 
 async function getPlayerList() {
     const result = await window.fetch('https://keepthescore.co/api/jebgggoverr/board/');
@@ -33,4 +33,4 @@ function resolveAfter1Seconds() {
   });
   }
 
-export {getPlayerList, getPlayerScoreList, resolveAfter1Seconds, addScore};
+export { getPlayerList, getPlayerScoreList, resolveAfter1Seconds, addScore };

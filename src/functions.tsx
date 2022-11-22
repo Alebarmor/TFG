@@ -1,4 +1,4 @@
-import {cards, game } from './orchard';
+import { cards, game } from './orchard';
 
 function indexOfCardInUse() {
     const beingUsed = cards.filter((card) => {
@@ -239,4 +239,4 @@ function indexOfCardInUse() {
     }
   }
 
-  export {calScoreId, gethits, indexOfCardInUse, move, place, putCardIntoUse, rotate};
+  export { calScoreId, gethits, indexOfCardInUse, move, place, putCardIntoUse, rotate };

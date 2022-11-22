@@ -4,16 +4,17 @@ import Board from './board';
 import './index.css';
 import { useForm } from 'react-hook-form'
 import Square from './square';
-import { getPlayerList, getPlayerScoreList, resolveAfter1Seconds, addScore} from './apiFunctions';
-import {move, place, putCardIntoUse, rotate} from './functions'
+import { getPlayerList, getPlayerScoreList, resolveAfter1Seconds, addScore } from './apiFunctions';
+import { move, place, putCardIntoUse, rotate } from './functions'
 import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow, ModalHeader, Center } from '@chakra-ui/react'
-import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody,
+  PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow,
+  ModalHeader, Center, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Alert, AlertIcon,
+  AlertTitle, AlertDescription, FormControl, FormLabel, Input, Table, Thead, Tbody,
+  Tr, Th, Td, TableContainer } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
 import { BsEmojiLaughing, BsClipboardData } from "react-icons/bs";
-import { Alert, AlertIcon, AlertTitle, AlertDescription, FormControl, FormLabel, Input} from '@chakra-ui/react'
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/react'
 import { motion } from "framer-motion"
 
 const gameData={
@@ -30,6 +31,7 @@ const gameData={
   }
   ]
 }
+
 var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
 let barajaAleatoria = listaNumeros.slice(0,9);
@@ -38,16 +40,13 @@ var game = gameData.elements;
 let playerData: Array<{ rank: number, name: string, score: number }> = [];
 
 
-
-  
- 
   function ModalRules() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
       <>
         {game[0].turn===0?<Button rightIcon={<Icon as={FiFileText}/>} width='200px' size='lg' colorScheme='blackAlpha' variant='solid' onClick={onOpen}>Check the rules</Button>:<></>}
         {game[0].turn!==0?<Button leftIcon={<Icon as={FiFileText}/>} width='150px' size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>:<></>}
-
+        
         <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
           <ModalOverlay />
           <ModalContent>
@@ -64,6 +63,7 @@ let playerData: Array<{ rank: number, name: string, score: number }> = [];
   function EndMessage() {
     var message = '';
     var score = game[0].score;
+
     if (score < 0) {
       message = "Negative numbers? That's not what you want to do... Check the rules!";
     } else if (score === 0) {
@@ -83,6 +83,7 @@ let playerData: Array<{ rank: number, name: string, score: number }> = [];
     } else if (score > 55) {
       message = "I didn't know I was treating with the God of Trees! Congratulations!";
     }
+
     return (
       <>
         <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
@@ -165,10 +166,15 @@ let playerData: Array<{ rank: number, name: string, score: number }> = [];
   }
 
   function ScoreAndBadges() {
+    let scoreForProgress = 0;
+    if (game[0].score >= 0) {
+      scoreForProgress = game[0].score;
+    }
+
     return (
       <>
         <HStack spacing='20'>
-          <CircularProgress value={game[0].score/55*100} size='120px' />
+          <CircularProgress value={scoreForProgress/55*100} size='120px' />
           {game[0].turn===10?<Text as='b' fontSize='70px' color='#3B3B3B'>Score: {game[0].score}</Text>:<></>}
           {game[0].turn!==10?<Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>:<></>}
         </HStack>
@@ -201,15 +207,16 @@ let playerData: Array<{ rank: number, name: string, score: number }> = [];
       getPlayerList();
       getPlayerScoreList()
       await resolveAfter1Seconds();
-      if(values.name.length<=3){
+
+      if (values.name.length <= 3) {
         game[0].errorMsg = ["Too short","must have at least 4 characters"];
-      }else{
-        if (values.name.length>25) {
+      } else {
+        if (values.name.length > 25) {
         game[0].errorMsg = ["Too long","must have 25 characters max"];
-        }else{
-          if(game[0].playerList.includes(values.name)) {
+        } else {
+          if (game[0].playerList.includes(values.name)) {
             game[0].errorMsg = ["Name is on use","Try another."];
-          }else{
+          } else {
             window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
             await resolveAfter1Seconds();
             window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
@@ -234,13 +241,13 @@ let playerData: Array<{ rank: number, name: string, score: number }> = [];
               <FormControl >
                 <FormLabel  htmlFor='name'>Please specify a name</FormLabel>
                 <Input id='name' placeholder='name'{...register('name', {required: 'This is required',})}/>
-                {game[0].errorMsg.length===2?
+                {game[0].errorMsg.length === 2?
                   <Alert className='fade-in-short' status='error' width='auto'>
                     <AlertIcon />
                     <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
                     <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
                     </Alert>:<></>}
-                {game[0].errorMsg.length===1&&game[0].errorMsg[0]!==""?
+                {game[0].errorMsg.length === 1 && game[0].errorMsg[0] !== ""?
                   <Alert status='success'>
                   <AlertIcon />
                   <AlertDescription>{game[0].errorMsg[0]}</AlertDescription>
