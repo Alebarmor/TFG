@@ -2,14 +2,19 @@ import React from 'react';
 import allCards from './cards_data';
 import Board from './board';
 import './index.css';
-
+import { useForm } from 'react-hook-form'
+import Square from './square';
+import { getPlayerList, getPlayerScoreList, resolveAfter1Seconds, addScore } from './apiFunctions';
+import { move, place, putCardIntoUse, rotate } from './functions'
 import { Box, Image, Button, ButtonGroup, Stack, HStack, Container, UnorderedList, Icon, useDisclosure,
-  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody, PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow } from '@chakra-ui/react'
-import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
+  Text, Badge, CircularProgress, Breadcrumb, BreadcrumbItem, BreadcrumbLink, PopoverFooter, PopoverBody,
+  PopoverCloseButton, PopoverHeader, PopoverTrigger, Popover, Portal, PopoverContent, PopoverArrow,
+  ModalHeader, Center, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, Alert, AlertIcon,
+  AlertTitle, AlertDescription, FormControl, FormLabel, Input, Table, Thead, Tbody,
+  Tr, Th, Td, TableContainer } from '@chakra-ui/react'
 import { FiArrowLeft, FiArrowRight, FiArrowDown, FiArrowUp, FiFileText } from 'react-icons/fi'
 import { BiTargetLock, BiRotateRight, BiExit } from "react-icons/bi";
-import { BsEmojiLaughing } from "react-icons/bs";
-import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react'
+import { BsEmojiLaughing, BsClipboardData } from "react-icons/bs";
 import { motion } from "framer-motion"
 
 const gameData={
@@ -19,312 +24,29 @@ const gameData={
       "turn":0,
       "scoreList": [1, 3, 6, 10],
       "rottenFruits":0,
-      "errorMsg": [""]
+      "rottenFruitsSquareIds":[177],
+      "errorMsg": [""],
+      "playerList":[""],
+      "playerScoreList":[""]
   }
   ]
 }
 
 var listaNumeros = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
 listaNumeros = listaNumeros.sort(function() {return Math.random() - 0.5});
-
 let barajaAleatoria = listaNumeros.slice(0,9);
 var cards = allCards.elements.filter(z => barajaAleatoria.includes(z.id));
-var game = gameData.elements
+var game = gameData.elements;
+let playerData: Array<{ rank: number, name: string, score: number }> = [];
 
-class Square extends React.Component<{id:number, cards:any}, { }> {
-  img: string = "";
-  rotation: number = 0;
 
-    render() {
-      var cardsInPositionOrdered = cards.filter(x => x.pos.includes(this.props.id)).sort((x,b) => {return b.turn-x.turn});
-      var upperCard = cardsInPositionOrdered[0];
-      var cardPos = 0;
-      var cardColor = 0;
-      if (upperCard !== undefined) {
-        cardPos = upperCard.pos.indexOf(this.props.id)
-        cardColor = upperCard.trees[cardPos];
-        this.rotation = upperCard.rotation;
-      }
-      
-      cardColor !== 0? this.img = "img/" + cardColor + "." + cardPos + ".png" : this.img = "img/blank.ico";
-
-      var stack = calScoreId(this.props.id);
-      var dicePng = "";
-      stack >=1? dicePng = "img/dado-" + cardColor + "-" + stack + ".png" : dicePng = "img/blank.ico";
-
-      var rotationHtml = "";
-      var classHtml = "";
-
-      //rotten
-      if (calScoreId(this.props.id) === 0 && cardsInPositionOrdered.length >= 2) {
-        dicePng = "img/rotten.png";
-      }
-
-      switch (this.rotation) {
-        case 2: rotationHtml = "rotate(90deg)"; break;
-        case 3: rotationHtml = "rotate(180deg)"; break;
-        case 4: rotationHtml = "rotate(270deg)"; break;
-        default: rotationHtml = "none"; break;
-      }
-
-      if (upperCard !== undefined) {
-        if (upperCard.inUse === true) {
-          classHtml = 'blink_me';
-        }
-      } else {
-        classHtml = 'none';
-      }
-
-      return (
-        <button className="square">
-          {<img className={classHtml} src={dicePng} width="55" alt='' style={{ position:'absolute', zIndex:'3' }} /> }
-          {<img className={classHtml} src={this.img} height ="55" width="55" alt='' style={{transform:rotationHtml, position:'relative', zIndex:'2'}}/>}
-        </button>
-      );
-    }
-  }
-
-  function indexOfCardInUse() {
-    const beingUsed = cards.filter((card) => {
-      return card.inUse === true;
-    });
-
-    var index;
-
-    if (beingUsed.length !== 0) {
-      index = cards.indexOf(beingUsed[0]);
-    } else {
-      index = 999;
-    }
-
-    return index
-  }
-
-  function putCardIntoUse(newCardIndex: number) { // Este método comprueba si se está usando alguna carta: en caso afirmativo,
-    var index = indexOfCardInUse();             // devuelve el índice la carta en uso; en caso negativo, devuelve 999.
-
-    if (index !== 999) {             
-      cards[index].pos = [777,777,777,777,777,777]; // Posición origen
-      cards[index].rotation = 1;
-      cards[index].turn = 0;
-      cards[index].inUse = false;
-    }
-
-    game[0].turn===1?cards[newCardIndex].pos = [65,66,77,78,89,90]:cards[newCardIndex].pos = [62,63,74,75,86,87];
-    
-    cards[newCardIndex].turn = game[0].turn;
-    cards[newCardIndex].inUse = true;
-    return cards
-  }
-
-  function move(direction: string) {
-    var index = indexOfCardInUse();
-    game[0].errorMsg = [];
-
-    if (index !== 999 && game[0].turn !== 1) {
-      var pos = cards[index].pos;
-      var res = pos;
-
-      var hrz = [1,1,1,1,1,1];       // Vector de movimiento horizontal
-      var vert = [12,12,12,12,12,12] // Vector de movimiento vertical
-
-      let limitHrz1 = pos[0]%12;  // En base al módulo base 12 de la posición de dos árboles (el primero y el
-      let limitHrz2 = pos[5]%12;  // último), podemos determinar si ha tocado alguna de las paredes horizontales,
-                                  // independientemente de la rotación en la que se encuentre la carta
-      switch (direction) {
-
-        case "right":
-          if (limitHrz1 !== 11 && limitHrz2 !== 11) {
-            for(let i = 0; i < pos.length; i++){
-              res[i] = pos[i] + hrz[i];
-            }
-          }
-          break;
-
-        case "left":
-          if (limitHrz1 !== 0 && limitHrz2 !== 0) {
-            for(let i = 0; i < pos.length; i++){
-              res[i] = pos[i] - hrz[i];
-            }
-          }
-          break;
-
-        case "up":
-          if (pos[0]-12 >= 0 && pos[5]-12 >= 0) { // Para los límites verticales, con sumar o restar una fila,
-            for(let i = 0; i < pos.length; i++){  // podemos saber si se pasa de abajo o arriba, respectivamente
-              res[i] = pos[i] - vert[i];
-            }
-          }
-          break;
-
-        case "down":
-          if (pos[0]+12 < 156 && pos[5]+12 < 156) {
-            for(let i = 0; i < pos.length; i++){
-              res[i] = pos[i] + vert[i];
-            }
-          }
-          break;
-      }
-
-      cards[index].pos = res;
-    } else if (index !== 999 && game[0].turn === 1) {
-      game[0].errorMsg = ["You can't move the card!","The first card must be placed in the center."];
-    }
-
-    return cards
-  }
-
-  function rotate() {
-    var index = indexOfCardInUse();
-    game[0].errorMsg = [];
-
-    if (index !== 999 && game[0].turn !== 1) {
-      var pos = cards[index].pos;
-      var res = cards[index].pos;
-      let rotation = cards[index].rotation;
-      let i;
-
-      var vert2hrz = [0,11,-13,-2,-26,-15];
-      var hrz2vert = [0,-13,-11,-24,-22,-35];
-
-      switch(rotation) {
-        
-        case 1:
-          if (pos[0]%12 === 0 || pos[0]%12 === 1) {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] - vert2hrz[pos.length - i - 1];
-            }
-          } else {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] + vert2hrz[i];
-            }
-          }
-          break;
-        
-        case 2:
-          if (pos[0]-24 < 0) {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] - hrz2vert[pos.length - i - 1];
-            }
-          } else {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] + hrz2vert[i];
-            }
-          }
-          break;
-
-        case 3:
-          if (pos[0]%12 === 11 || pos[0]%12 === 10) {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] + vert2hrz[pos.length - i - 1];
-            }
-          } else {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] - vert2hrz[i];
-            }
-          }
-          break;
-        
-        case 4:
-          if (pos[4]+24 >= 156) {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] + hrz2vert[pos.length - i - 1];
-            }
-          } else {
-            for(i = 0; i < pos.length; i++){
-              res[i] = pos[i] - hrz2vert[i];
-            }
-          }
-          break;
-      }
-
-      cards[index].pos = res;
-      
-      if (rotation === 4) {
-        cards[index].rotation = 1;
-      } else {
-        cards[index].rotation = rotation + 1;
-      }
-
-    } else if (index !== 999 && game[0].turn === 1) {
-      game[0].errorMsg = ["You can't rotate the card!","The first card must be placed in the center."];
-    }
-
-    return cards
-  }
-
-  function calScoreId(id:number):number {
-    var res = 0;
-      var cards2 = cards.filter(x => x.pos.includes(id));
-        if (cards2.length > 1) {
-          for (let c = 1; c <= 3 ; c++) {
-            var cards3 = cards2.filter(x => x.trees[x.pos.indexOf(id)] === c);
-            if (cards3.length === cards2.length) {
-              var i = cards3.length - 1;
-              if (i > 4) {
-                i = 4;
-              }
-              res = game[0].scoreList[i-1];
-            }
-          }
-        }
-    
-    return res;
-  }
-
-  function gethits(id:number):[number[],number[]]{
-   var hits = [];
-   var card = cards[id];
-   for (let index = 0; index <= 5; index++) {
-    if(cards.filter(x=>x.pos.includes(card.pos[index])).length>=2){
-      hits.push(card.pos[index]);
-    }
-   }
-   var bhits=[];
-      for (let index = 0; index < hits.length; index++) {
-        if(calScoreId(hits[index])===0) {bhits.push(hits[index])}
-      }
-   return [hits,bhits];
-  }
-
-  function place() {
-    var index = indexOfCardInUse();
-
-    if (index !== 999) {
-      var hs = gethits(index);
-
-      if (hs[0].length === 0 && game[0].turn !== 1) {
-        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
-        return game;
-      }
-      if (hs[1].length > 2 || (game[0].rottenFruits + hs[1].length) > 2) {
-        game[0].errorMsg = ["You can't place the card there!","Try it again in other place."];
-        return game;
-      }
-      
-      game[0].rottenFruits += hs[1].length;
-      cards[index].used = true;
-      cards[index].turn = game[0].turn;
-      cards[index].inUse = false;
-      game[0].turn += 1;
-      game[0].score = 0;
-
-      for (let n = 0; n <= 155 ; n++) {
-        game[0].score = game[0].score + calScoreId(n); 
-      }
-      game[0].score = game[0].score - (3*game[0].rottenFruits); 
-      game[0].errorMsg = [];
-      return game;
-    }
-  }
- 
   function ModalRules() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
       <>
         {game[0].turn===0?<Button rightIcon={<Icon as={FiFileText}/>} width='200px' size='lg' colorScheme='blackAlpha' variant='solid' onClick={onOpen}>Check the rules</Button>:<></>}
         {game[0].turn!==0?<Button leftIcon={<Icon as={FiFileText}/>} width='150px' size='lg' colorScheme='teal' variant='solid' onClick={onOpen}>Rules</Button>:<></>}
-
+        
         <Modal isOpen={isOpen} onClose={onClose} size='6xl' scrollBehavior='inside'>
           <ModalOverlay />
           <ModalContent>
@@ -341,6 +63,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   function EndMessage() {
     var message = '';
     var score = game[0].score;
+
     if (score < 0) {
       message = "Negative numbers? That's not what you want to do... Check the rules!";
     } else if (score === 0) {
@@ -360,6 +83,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     } else if (score > 55) {
       message = "I didn't know I was treating with the God of Trees! Congratulations!";
     }
+
     return (
       <>
         <Text bgGradient='linear(to-t, #166D3B, #0E4525)' bgClip='text'
@@ -372,6 +96,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
     game[0].score = 0;
     game[0].turn = 1;
     game[0].rottenFruits = 0;
+    game[0].errorMsg=[""]
 
     allCards.elements.map(x => x.pos = [777,777,777,777,777,777]);
     allCards.elements.map(x => x.used = false);
@@ -441,10 +166,15 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
 
   function ScoreAndBadges() {
+    let scoreForProgress = 0;
+    if (game[0].score >= 0) {
+      scoreForProgress = game[0].score;
+    }
+
     return (
       <>
         <HStack spacing='20'>
-          <CircularProgress value={game[0].score/55*100} size='120px' />
+          <CircularProgress value={scoreForProgress/55*100} size='120px' />
           {game[0].turn===10?<Text as='b' fontSize='70px' color='#3B3B3B'>Score: {game[0].score}</Text>:<></>}
           {game[0].turn!==10?<Text as='b' fontSize='50px' color='#3B3B3B'>Score: {game[0].score}</Text>:<></>}
         </HStack>
@@ -463,6 +193,131 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
       </>
     )
   }
+
+  function HookForm() {
+    const {
+      handleSubmit,
+      register,
+      formState: {isSubmitting },
+    } = useForm()
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
+    async function onSubmit(values: any) {
+      game[0].errorMsg = [];
+      getPlayerList();
+      getPlayerScoreList()
+      await resolveAfter1Seconds();
+
+      if (values.name.length <= 3) {
+        game[0].errorMsg = ["Too short","must have at least 4 characters"];
+      } else {
+        if (values.name.length > 25) {
+        game[0].errorMsg = ["Too long","must have 25 characters max"];
+        } else {
+          if (game[0].playerList.includes(values.name)) {
+            game[0].errorMsg = ["Name is on use","Try another."];
+          } else {
+            window.fetch('https://keepthescore.co/api/jziyrqggxhe/player/', {method: 'POST',headers: {'Content-Type': 'application/json'},body: JSON.stringify({'name': values.name})});
+            await resolveAfter1Seconds();
+            window.fetch('https://keepthescore.co/api/jebgggoverr/board/').then(result => result.json()).then(scoreboard => addScore(scoreboard.players.filter((x: { name: any })=>x.name===values.name)[0].id));
+            game[0].errorMsg = ["Correct submit"]
+            UpdateLeaderBoard();
+          }
+        }
+      }
+
+      return game;
+    }
+
+    return (
+      <>
+      <Button leftIcon={<Icon as={BsClipboardData}/>} width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Submit Score</Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent top={"60%"}>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FormControl >
+                <FormLabel  htmlFor='name'>Please specify a name</FormLabel>
+                <Input id='name' placeholder='name'{...register('name', {required: 'This is required',})}/>
+                {game[0].errorMsg.length === 2?
+                  <Alert className='fade-in-short' status='error' width='auto'>
+                    <AlertIcon />
+                    <AlertTitle >{game[0].errorMsg[0]}</AlertTitle>
+                    <AlertDescription>{game[0].errorMsg[1]}</AlertDescription>
+                    </Alert>:<></>}
+                {game[0].errorMsg.length === 1 && game[0].errorMsg[0] !== ""?
+                  <Alert status='success'>
+                  <AlertIcon />
+                  <AlertDescription>{game[0].errorMsg[0]}</AlertDescription>
+                  </Alert>:<></>}
+              </FormControl>
+              <Button mt={4} colorScheme='pink' isLoading={isSubmitting} type='submit'>
+                Submit Score
+              </Button>
+            </form>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      </>
+    )
+  }
+
+ async function UpdateLeaderBoard() {
+  getPlayerList();
+  getPlayerScoreList();
+  await resolveAfter1Seconds();
+  playerData = [];
+
+  if (game[0].playerList.length > 0) {
+    for (let i = 0; i < game[0].playerList.length; i++) {
+      playerData.push({rank: i + 1, name: game[0].playerList[i], score: +game[0].playerScoreList[i]});
+    }
+  }
+ }
+
+ function ModalBoard() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  return (
+    <>
+      <Button  width='200px' size='lg' colorScheme='blackAlpha' onClick={onOpen}>Show leaderboard</Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent maxWidth="30%" bgGradient='linear(to-t, #028cf3, #2feaa8)'>
+          <Center><ModalHeader><Text fontSize='25px' as='b'>LEADERBOARD</Text></ModalHeader></Center>
+          <ModalCloseButton />
+          <ModalBody>
+            <TableContainer>
+              <Table size='lg'>
+                <Thead>
+                  <Tr>
+                    <Th><Text color="black" fontSize='18px' as='b'>Rank</Text></Th>
+                    <Th><Text color="black" fontSize='18px' as='b'>Player name</Text></Th>
+                    <Th><Text color="black" fontSize='18px' as='b'>score</Text></Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                {
+                  playerData.map(
+                  data => 
+                  
+                  <Tr key={data.name+"O"}>
+                    <Td><Text as="b">{data.rank}</Text></Td>  
+                    <Td><Text as="b">{data.name}</Text></Td>
+                    <Td isNumeric><Text as="b">{data.score}</Text></Td>
+                  </Tr>,
+                  )
+                  }
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}
 
   class Game extends React.Component {
     render() {
@@ -497,6 +352,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
         )
 
       case 10:
+        UpdateLeaderBoard();
         return(
           <>
             <motion.div
@@ -513,8 +369,12 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                 <ScoreAndBadges />
               </Stack>
               <EndMessage />
-              <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
-                onClick={() => this.setState(restart)}>Try again</Button>
+              <ButtonGroup gap='2'>
+                <Button rightIcon={<Icon as={BsEmojiLaughing}/>} width='200px' size='lg' colorScheme='blackAlpha' 
+                  onClick={() => this.setState(restart)}>Try again</Button>
+                  <HookForm/>
+                <ModalBoard />
+              </ButtonGroup>
             </Container></motion.div>
           </>
         )
@@ -614,7 +474,7 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
                 <UnorderedList>
                   <HStack pt='25px' pb='25px'>
                     {cards.filter(z => z.inUse === false && z.used === false).map(z => { return(
-                      <Container centerContent>
+                      <Container centerContent key={z.id}>
                         <Image className='grow' alt='Card' width='140px' src={z.img} onClick={() => this.setState(putCardIntoUse(cards.indexOf(z)))} boxShadow='dark-lg'/>
                       </Container>
                     )})}
@@ -629,4 +489,4 @@ class Square extends React.Component<{id:number, cards:any}, { }> {
   }
   // ========================================
   export default Game;
-  export {Square, cards, Navbar, Footer };
+  export {Square, cards, Navbar, Footer, game};
